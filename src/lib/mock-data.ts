@@ -1,0 +1,325 @@
+export interface Competition {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  imageUrl: string;
+  prizeValue: number;
+  cashAlternative: number | null;
+  ticketPrice: number;
+  totalTickets: number;
+  ticketsSold: number;
+  drawDate: string;
+  category: string;
+  status: 'live' | 'coming_soon' | 'drawn' | 'sold_out';
+  featured: boolean;
+  maxPerPerson: number;
+}
+
+export interface Winner {
+  id: string;
+  name: string;
+  location: string;
+  prize: string;
+  prizeValue: number;
+  imageUrl: string;
+  competitionTitle: string;
+  wonDate: string;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  icon: string;
+}
+
+export const categories: Category[] = [
+  { id: '1', name: 'All', slug: 'all', icon: '🏆' },
+  { id: '2', name: 'Cars', slug: 'cars', icon: '🚗' },
+  { id: '3', name: 'Cash', slug: 'cash', icon: '💰' },
+  { id: '4', name: 'Tech', slug: 'tech', icon: '💻' },
+  { id: '5', name: 'Holidays', slug: 'holidays', icon: '✈️' },
+  { id: '6', name: 'Experiences', slug: 'experiences', icon: '🎯' },
+  { id: '7', name: 'Home', slug: 'home', icon: '🏠' },
+  { id: '8', name: 'Watches & Jewellery', slug: 'watches-jewellery', icon: '⌚' },
+];
+
+export const competitions: Competition[] = [
+  {
+    id: '1',
+    title: 'BMW M4 Competition or £60,000 Cash',
+    slug: 'bmw-m4-competition-or-60000-cash',
+    description: 'Win this stunning BMW M4 Competition in Isle of Man Green, packed with 503bhp and every optional extra. Or take the £60,000 cash alternative — the choice is yours! This incredible machine features carbon ceramic brakes, M Sport exhaust system, and the iconic straight-six twin-turbo engine.',
+    imageUrl: '/images/bmw-m4.jpg',
+    prizeValue: 7500000,
+    cashAlternative: 6000000,
+    ticketPrice: 199,
+    totalTickets: 7999,
+    ticketsSold: 5432,
+    drawDate: '2026-07-15T20:00:00Z',
+    category: 'cars',
+    status: 'live',
+    featured: true,
+    maxPerPerson: 100,
+  },
+  {
+    id: '2',
+    title: '£25,000 Cash Prize',
+    slug: '25000-cash-prize',
+    description: 'Win a life-changing £25,000 in cold hard cash. No strings attached, paid directly to your bank account within 48 hours of the draw. Spend it however you like — pay off bills, book the holiday of a lifetime, or invest in your future.',
+    imageUrl: '/images/cash-25k.jpg',
+    prizeValue: 2500000,
+    cashAlternative: null,
+    ticketPrice: 99,
+    totalTickets: 4999,
+    ticketsSold: 3821,
+    drawDate: '2026-07-10T19:00:00Z',
+    category: 'cash',
+    status: 'live',
+    featured: true,
+    maxPerPerson: 150,
+  },
+  {
+    id: '3',
+    title: 'MacBook Pro M4 + iPad Pro Bundle',
+    slug: 'macbook-pro-m4-ipad-pro-bundle',
+    description: 'Win the ultimate Apple bundle! The brand new MacBook Pro with M4 chip, 16-inch Liquid Retina XDR display, 36GB RAM, and 1TB SSD. Plus an iPad Pro M4 with Apple Pencil Pro and Magic Keyboard. Everything a creative professional dreams of.',
+    imageUrl: '/images/macbook-bundle.jpg',
+    prizeValue: 450000,
+    cashAlternative: 350000,
+    ticketPrice: 49,
+    totalTickets: 1999,
+    ticketsSold: 1287,
+    drawDate: '2026-07-08T20:00:00Z',
+    category: 'tech',
+    status: 'live',
+    featured: true,
+    maxPerPerson: 200,
+  },
+  {
+    id: '4',
+    title: 'Luxury Maldives Holiday for Two',
+    slug: 'luxury-maldives-holiday-for-two',
+    description: '7 nights in a stunning overwater villa in the Maldives. Includes business class flights from Edinburgh or Glasgow, full board dining, spa treatments, and sunset dolphin cruise. The ultimate getaway for you and your partner.',
+    imageUrl: '/images/maldives.jpg',
+    prizeValue: 1200000,
+    cashAlternative: 800000,
+    ticketPrice: 149,
+    totalTickets: 2999,
+    ticketsSold: 1150,
+    drawDate: '2026-07-20T20:00:00Z',
+    category: 'holidays',
+    status: 'live',
+    featured: false,
+    maxPerPerson: 100,
+  },
+  {
+    id: '5',
+    title: 'Rolex Submariner Date',
+    slug: 'rolex-submariner-date',
+    description: 'Win the iconic Rolex Submariner Date in Oystersteel with black dial. Brand new, unworn, with full box and papers. The watch that needs no introduction — a true classic that holds its value.',
+    imageUrl: '/images/rolex.jpg',
+    prizeValue: 900000,
+    cashAlternative: 700000,
+    ticketPrice: 129,
+    totalTickets: 1999,
+    ticketsSold: 1876,
+    drawDate: '2026-07-05T20:00:00Z',
+    category: 'watches-jewellery',
+    status: 'live',
+    featured: false,
+    maxPerPerson: 50,
+  },
+  {
+    id: '6',
+    title: 'PS5 Pro + 4K OLED TV Gaming Setup',
+    slug: 'ps5-pro-4k-oled-tv-gaming-setup',
+    description: 'The ultimate gaming setup! PS5 Pro console with 2TB SSD, Sony 65" A95L OLED TV, Pulse Elite headset, DualSense Edge controller, and 10 games of your choice. Game like a pro.',
+    imageUrl: '/images/ps5-setup.jpg',
+    prizeValue: 500000,
+    cashAlternative: 350000,
+    ticketPrice: 79,
+    totalTickets: 1499,
+    ticketsSold: 890,
+    drawDate: '2026-07-12T20:00:00Z',
+    category: 'tech',
+    status: 'live',
+    featured: false,
+    maxPerPerson: 100,
+  },
+  {
+    id: '7',
+    title: 'Highland Whisky Experience Weekend',
+    slug: 'highland-whisky-experience-weekend',
+    description: 'An exclusive weekend experience touring Scotland\'s finest Highland distilleries. Stay at a luxury lodge, enjoy private tastings at 5 premium distilleries, gourmet Scottish dining, and take home a curated collection of rare bottles worth over £2,000.',
+    imageUrl: '/images/whisky.jpg',
+    prizeValue: 500000,
+    cashAlternative: 300000,
+    ticketPrice: 49,
+    totalTickets: 2499,
+    ticketsSold: 654,
+    drawDate: '2026-07-25T20:00:00Z',
+    category: 'experiences',
+    status: 'live',
+    featured: false,
+    maxPerPerson: 200,
+  },
+  {
+    id: '8',
+    title: '£10,000 Home Renovation Fund',
+    slug: '10000-home-renovation-fund',
+    description: 'Win £10,000 to transform your home! Whether it\'s a new kitchen, bathroom makeover, garden redesign, or that extension you\'ve been dreaming about. Cash paid directly so you can choose your own contractors.',
+    imageUrl: '/images/home-reno.jpg',
+    prizeValue: 1000000,
+    cashAlternative: null,
+    ticketPrice: 99,
+    totalTickets: 1999,
+    ticketsSold: 1456,
+    drawDate: '2026-07-18T20:00:00Z',
+    category: 'home',
+    status: 'live',
+    featured: false,
+    maxPerPerson: 100,
+  },
+  {
+    id: '9',
+    title: 'Mercedes-AMG A45 S or £45,000 Cash',
+    slug: 'mercedes-amg-a45s-or-45000-cash',
+    description: 'The world\'s most powerful four-cylinder production car! This Mercedes-AMG A45 S comes in Cosmos Black with AMG Performance seats, AMG Aerodynamics package, and the incredible 421bhp turbo engine. Or take £45,000 cash.',
+    imageUrl: '/images/amg-a45.jpg',
+    prizeValue: 5500000,
+    cashAlternative: 4500000,
+    ticketPrice: 149,
+    totalTickets: 5999,
+    ticketsSold: 2100,
+    drawDate: '2026-08-01T20:00:00Z',
+    category: 'cars',
+    status: 'live',
+    featured: true,
+    maxPerPerson: 100,
+  },
+  {
+    id: '10',
+    title: '£5,000 Cash Quickie',
+    slug: '5000-cash-quickie',
+    description: 'A quick-fire competition with amazing odds! Win £5,000 cash with only 999 tickets available. One of our most popular competitions — don\'t miss out!',
+    imageUrl: '/images/cash-5k.jpg',
+    prizeValue: 500000,
+    cashAlternative: null,
+    ticketPrice: 49,
+    totalTickets: 999,
+    ticketsSold: 870,
+    drawDate: '2026-07-03T20:00:00Z',
+    category: 'cash',
+    status: 'live',
+    featured: false,
+    maxPerPerson: 50,
+  },
+];
+
+export const winners: Winner[] = [
+  {
+    id: '1',
+    name: 'Jamie M.',
+    location: 'Glasgow',
+    prize: 'Audi RS6 Avant',
+    prizeValue: 8500000,
+    imageUrl: '/images/winner-1.jpg',
+    competitionTitle: 'Audi RS6 Avant or £85,000 Cash',
+    wonDate: '2026-05-15',
+  },
+  {
+    id: '2',
+    name: 'Sarah K.',
+    location: 'Edinburgh',
+    prize: '£50,000 Cash',
+    prizeValue: 5000000,
+    imageUrl: '/images/winner-2.jpg',
+    competitionTitle: '£50,000 Cash Prize',
+    wonDate: '2026-05-01',
+  },
+  {
+    id: '3',
+    name: 'Craig D.',
+    location: 'Aberdeen',
+    prize: 'Rolex Daytona',
+    prizeValue: 2800000,
+    imageUrl: '/images/winner-3.jpg',
+    competitionTitle: 'Rolex Daytona or £28,000 Cash',
+    wonDate: '2026-04-20',
+  },
+  {
+    id: '4',
+    name: 'Emma R.',
+    location: 'Dundee',
+    prize: 'Holiday to Barbados',
+    prizeValue: 800000,
+    imageUrl: '/images/winner-4.jpg',
+    competitionTitle: 'Luxury Barbados Holiday for Two',
+    wonDate: '2026-04-10',
+  },
+  {
+    id: '5',
+    name: 'Mark T.',
+    location: 'Inverness',
+    prize: 'PS5 Pro Gaming Bundle',
+    prizeValue: 350000,
+    imageUrl: '/images/winner-5.jpg',
+    competitionTitle: 'Ultimate Gaming Setup',
+    wonDate: '2026-03-28',
+  },
+  {
+    id: '6',
+    name: 'Laura B.',
+    location: 'Stirling',
+    prize: '£10,000 Cash',
+    prizeValue: 1000000,
+    imageUrl: '/images/winner-6.jpg',
+    competitionTitle: '£10,000 Cash Quickie',
+    wonDate: '2026-03-15',
+  },
+];
+
+export const faqs = [
+  {
+    question: 'How does ScotComps work?',
+    answer: 'ScotComps runs prize competitions where you purchase tickets for a chance to win incredible prizes. Each competition has a set number of tickets and a draw date. Once all tickets are sold or the draw date arrives, we randomly select a winner using a verified random number generator. It\'s that simple!',
+  },
+  {
+    question: 'Is ScotComps legitimate?',
+    answer: 'Absolutely! ScotComps is a registered Scottish company operating fully within UK competition law. All draws are conducted transparently using provably fair random number generation, and winners are announced on our website and social media channels.',
+  },
+  {
+    question: 'How are winners chosen?',
+    answer: 'Winners are selected using a cryptographically secure random number generator. The draw is conducted live on our social media channels so you can watch in real-time. Each ticket has an equal chance of winning.',
+  },
+  {
+    question: 'When will I receive my prize?',
+    answer: 'Cash prizes are transferred within 48 hours of the draw. Physical prizes (cars, tech, watches) are typically delivered within 14 working days. Holiday prizes are booked in consultation with the winner to suit their schedule.',
+  },
+  {
+    question: 'Can I enter from outside Scotland?',
+    answer: 'Yes! While we\'re proudly based in Scotland, our competitions are open to anyone in the UK aged 18 or over. Prizes can be delivered anywhere in mainland UK.',
+  },
+  {
+    question: 'Is there a free entry method?',
+    answer: 'Yes, in accordance with UK competition law, a free postal entry method is available for all competitions. Full details can be found in our Terms & Conditions.',
+  },
+  {
+    question: 'How many tickets can I buy?',
+    answer: 'Each competition has a maximum ticket limit per person, which is displayed on the competition page. This ensures fairness and gives everyone a great chance of winning.',
+  },
+  {
+    question: 'What happens if a competition doesn\'t sell out?',
+    answer: 'The draw will still take place on the scheduled date regardless of how many tickets have been sold. Your odds of winning actually improve if a competition doesn\'t sell out!',
+  },
+  {
+    question: 'Can I choose the cash alternative instead of the prize?',
+    answer: 'Yes! Where a cash alternative is offered, the winner can choose between the prize or the cash amount stated. This decision is made after winning and you\'ll have 7 days to decide.',
+  },
+  {
+    question: 'How do I know the competitions are fair?',
+    answer: 'Every draw uses a verified random number generator with results published publicly. Our draw process is fully auditable and we publish the winning ticket number, time of draw, and verification hash for complete transparency.',
+  },
+];
