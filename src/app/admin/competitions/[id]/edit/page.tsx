@@ -1,7 +1,6 @@
 'use client';
 
 import { use } from 'react';
-import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { competitions } from '@/lib/mock-data';
 
@@ -26,11 +25,7 @@ export default function EditCompetitionPage({
 
   return (
     <div className="max-w-3xl mx-auto">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
+      <div className="animate-fade-in-up">
         <div className="flex items-center gap-2 text-sm text-muted mb-6">
           <Link href="/admin/competitions" className="hover:text-foreground transition-colors">
             Competitions
@@ -150,7 +145,7 @@ export default function EditCompetitionPage({
             </div>
           </div>
         </form>
-      </motion.div>
+      </div>
     </div>
   );
 }

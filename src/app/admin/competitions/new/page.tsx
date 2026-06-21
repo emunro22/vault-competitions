@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import Link from 'next/link';
 
 export default function NewCompetitionPage() {
@@ -17,11 +16,7 @@ export default function NewCompetitionPage() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
+      <div className="animate-fade-in-up">
         <div className="flex items-center gap-2 text-sm text-muted mb-6">
           <Link href="/admin/competitions" className="hover:text-foreground transition-colors">
             Competitions
@@ -212,7 +207,7 @@ export default function NewCompetitionPage() {
             </button>
           </div>
         </form>
-      </motion.div>
+      </div>
     </div>
   );
 }

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
 import CompetitionCard from '@/components/CompetitionCard';
 import CategoryFilter from '@/components/CategoryFilter';
 import { competitions } from '@/lib/mock-data';
@@ -39,28 +38,16 @@ export default function CompetitionsPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="mb-10"
-      >
+      <div className="animate-fade-in-up mb-10">
         <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-2">
           All Competitions
         </h1>
         <p className="text-muted text-lg">
           Browse our full range of live competitions. Tickets from just £0.49.
         </p>
-      </motion.div>
+      </div>
 
-      {/* Filters */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8"
-      >
+      <div className="animate-fade-in-up flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8" style={{ animationDelay: '100ms' }}>
         <CategoryFilter activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
 
         <select
@@ -73,14 +60,12 @@ export default function CompetitionsPage() {
           <option value="price-high">Price: High to Low</option>
           <option value="popularity">Most Popular</option>
         </select>
-      </motion.div>
+      </div>
 
-      {/* Results count */}
       <p className="text-sm text-muted mb-6">
         Showing {filtered.length} competition{filtered.length !== 1 ? 's' : ''}
       </p>
 
-      {/* Grid */}
       {filtered.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filtered.map((comp, i) => (

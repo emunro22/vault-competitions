@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import { formatPrice } from '@/lib/utils';
 
 interface TicketSelectorProps {
@@ -30,7 +29,6 @@ export default function TicketSelector({ ticketPrice, maxPerPerson, remainingTic
         </p>
       </div>
 
-      {/* Quick picks */}
       <div className="flex flex-wrap gap-2">
         {quickPicks.filter((n) => n <= max).map((n) => (
           <button
@@ -47,7 +45,6 @@ export default function TicketSelector({ ticketPrice, maxPerPerson, remainingTic
         ))}
       </div>
 
-      {/* Custom quantity */}
       <div className="flex items-center gap-4">
         <button
           onClick={() => handleChange(quantity - 1)}
@@ -73,20 +70,13 @@ export default function TicketSelector({ ticketPrice, maxPerPerson, remainingTic
         </button>
       </div>
 
-      {/* Total */}
       <div className="bg-background rounded-xl p-4 flex items-center justify-between">
         <span className="text-muted">Total</span>
-        <motion.span
-          key={total}
-          initial={{ scale: 1.2 }}
-          animate={{ scale: 1 }}
-          className="text-2xl font-bold text-foreground"
-        >
+        <span className="text-2xl font-bold text-foreground">
           {formatPrice(total)}
-        </motion.span>
+        </span>
       </div>
 
-      {/* Buy button */}
       <button className="w-full py-4 bg-success hover:bg-success-light text-background font-bold text-lg rounded-xl transition-all hover:scale-[1.02] glow-success">
         Add to Cart
       </button>

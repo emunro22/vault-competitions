@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -14,7 +13,6 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError('');
-    // Simulated login
     await new Promise((r) => setTimeout(r, 1000));
     setError('Login functionality requires database connection. Please configure your .env file.');
     setLoading(false);
@@ -22,13 +20,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-16">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md"
-      >
-        {/* Header */}
+      <div className="animate-fade-in-up w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-6">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center font-bold text-white text-xl">
@@ -39,7 +31,6 @@ export default function LoginPage() {
           <p className="text-muted">Log in to your ScotComps account</p>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-6 sm:p-8 space-y-5">
           {error && (
             <div className="bg-danger/10 border border-danger/20 text-danger text-sm rounded-xl p-3">
@@ -93,7 +84,7 @@ export default function LoginPage() {
             Sign up free
           </Link>
         </p>
-      </motion.div>
+      </div>
     </div>
   );
 }

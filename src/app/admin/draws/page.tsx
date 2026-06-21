@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import { competitions } from '@/lib/mock-data';
 import { percentSold } from '@/lib/utils';
 
@@ -29,23 +28,14 @@ export default function AdminDrawsPage() {
 
   return (
     <div className="max-w-5xl mx-auto">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="mb-8"
-      >
+      <div className="animate-fade-in-up mb-8">
         <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-1">Draw Manager</h1>
         <p className="text-muted">Run verified draws for completed competitions.</p>
-      </motion.div>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Draw Panel */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-        >
+        <div className="animate-fade-in-up" style={{ animationDelay: '100ms' }}>
           <div className="bg-card border border-border rounded-2xl p-6">
             <h2 className="text-lg font-semibold text-foreground mb-4">Run a Draw</h2>
 
@@ -113,11 +103,7 @@ export default function AdminDrawsPage() {
 
             {/* Result */}
             {result && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="mt-6 bg-success/10 border border-success/30 rounded-xl p-6 text-center"
-              >
+              <div className="animate-fade-in-up mt-6 bg-success/10 border border-success/30 rounded-xl p-6 text-center">
                 <p className="text-sm text-success font-medium mb-2">Winner Selected!</p>
                 <p className="text-3xl font-bold text-foreground font-mono mb-1">
                   Ticket #{String(result.ticket).padStart(4, '0')}
@@ -126,17 +112,13 @@ export default function AdminDrawsPage() {
                 <p className="text-xs text-muted mt-3">
                   Demo draw — connect database to match ticket to user
                 </p>
-              </motion.div>
+              </div>
             )}
           </div>
-        </motion.div>
+        </div>
 
         {/* Upcoming Draws List */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
+        <div className="animate-fade-in-up" style={{ animationDelay: '200ms' }}>
           <h2 className="text-lg font-semibold text-foreground mb-4">Upcoming Draws</h2>
           <div className="space-y-3">
             {eligibleComps
@@ -179,7 +161,7 @@ export default function AdminDrawsPage() {
                 );
               })}
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

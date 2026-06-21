@@ -1,10 +1,8 @@
-'use client';
-
-import { motion } from 'framer-motion';
 import HeroSection from '@/components/HeroSection';
 import CompetitionCard from '@/components/CompetitionCard';
 import HowItWorksSection from '@/components/HowItWorksSection';
 import WinnersSection from '@/components/WinnersSection';
+import FadeIn from '@/components/FadeIn';
 import { competitions } from '@/lib/mock-data';
 import Link from 'next/link';
 
@@ -19,13 +17,7 @@ export default function HomePage() {
       {/* Featured Competitions */}
       <section className="py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="flex items-end justify-between mb-10"
-          >
+          <FadeIn className="flex items-end justify-between mb-10">
             <div>
               <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-2">
                 Featured Competitions
@@ -43,7 +35,7 @@ export default function HomePage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </Link>
-          </motion.div>
+          </FadeIn>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {featuredCompetitions.map((comp, i) => (
@@ -56,12 +48,7 @@ export default function HomePage() {
       {/* CTA Banner */}
       <section className="py-16 bg-gradient-to-r from-primary/10 via-accent/5 to-primary/10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
+          <FadeIn>
             <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
               Ready to Win?
             </h2>
@@ -74,27 +61,21 @@ export default function HomePage() {
             >
               Create Free Account
             </Link>
-          </motion.div>
+          </FadeIn>
         </div>
       </section>
 
       {/* Live Competitions Grid */}
       <section className="py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-10"
-          >
+          <FadeIn className="text-center mb-10">
             <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-2">
               Live Competitions
             </h2>
             <p className="text-muted text-lg">
               Browse all our currently live competitions and find your next win.
             </p>
-          </motion.div>
+          </FadeIn>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {liveCompetitions.map((comp, i) => (

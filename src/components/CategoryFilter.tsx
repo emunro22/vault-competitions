@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { categories } from '@/lib/mock-data';
 
 interface CategoryFilterProps {
@@ -15,23 +14,14 @@ export default function CategoryFilter({ activeCategory, onCategoryChange }: Cat
         <button
           key={category.id}
           onClick={() => onCategoryChange(category.slug)}
-          className="relative px-4 py-2 text-sm font-medium rounded-xl transition-colors"
+          className={`px-4 py-2 text-sm font-medium rounded-xl transition-all duration-200 flex items-center gap-1.5 ${
+            activeCategory === category.slug
+              ? 'bg-primary text-white'
+              : 'text-muted hover:text-foreground hover:bg-card'
+          }`}
         >
-          {activeCategory === category.slug && (
-            <motion.div
-              layoutId="activeCategory"
-              className="absolute inset-0 bg-primary rounded-xl"
-              transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-            />
-          )}
-          <span
-            className={`relative z-10 flex items-center gap-1.5 ${
-              activeCategory === category.slug ? 'text-white' : 'text-muted hover:text-foreground'
-            }`}
-          >
-            <span>{category.icon}</span>
-            {category.name}
-          </span>
+          <span>{category.icon}</span>
+          {category.name}
         </button>
       ))}
     </div>

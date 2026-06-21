@@ -1,8 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-
 const mockUsers = [
   { id: '1', name: 'Jamie McGregor', email: 'jamie@example.com', role: 'user' as const, entries: 47, spent: 9450, joined: '2026-01-15' },
   { id: '2', name: 'Sarah Kennedy', email: 'sarah@example.com', role: 'user' as const, entries: 92, spent: 18200, joined: '2025-11-20' },
@@ -24,15 +22,10 @@ export default function AdminUsersPage() {
 
   return (
     <div className="max-w-7xl mx-auto">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="mb-8"
-      >
+      <div className="animate-fade-in-up mb-8">
         <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-1">Users</h1>
         <p className="text-muted">Manage registered users and their accounts.</p>
-      </motion.div>
+      </div>
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">

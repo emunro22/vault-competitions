@@ -1,6 +1,3 @@
-'use client';
-
-import { motion } from 'framer-motion';
 import Link from 'next/link';
 
 const mockTickets = [
@@ -17,12 +14,7 @@ export default function TicketsPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="mb-10"
-      >
+      <div className="animate-fade-in-up mb-10">
         <div className="flex items-center gap-2 text-sm text-muted mb-4">
           <Link href="/account" className="hover:text-foreground transition-colors">Account</Link>
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -32,9 +24,8 @@ export default function TicketsPage() {
         </div>
         <h1 className="text-3xl font-bold text-foreground mb-2">My Tickets</h1>
         <p className="text-muted">View all your competition entries and ticket numbers.</p>
-      </motion.div>
+      </div>
 
-      {/* Active */}
       <section className="mb-12">
         <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-success pulse-live" />
@@ -42,12 +33,10 @@ export default function TicketsPage() {
         </h2>
         <div className="space-y-4">
           {activeTickets.map((entry, i) => (
-            <motion.div
+            <div
               key={entry.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: i * 0.1 }}
-              className="bg-card border border-border rounded-2xl p-5"
+              className="animate-fade-in-up bg-card border border-border rounded-2xl p-5"
+              style={{ animationDelay: `${i * 100}ms` }}
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                 <h3 className="font-semibold text-foreground">{entry.competition}</h3>
@@ -70,24 +59,21 @@ export default function TicketsPage() {
                   </span>
                 ))}
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </section>
 
-      {/* Past */}
       <section>
         <h2 className="text-xl font-semibold text-foreground mb-4">
           Past Entries ({pastTickets.length})
         </h2>
         <div className="space-y-4">
           {pastTickets.map((entry, i) => (
-            <motion.div
+            <div
               key={entry.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: i * 0.1 }}
-              className="bg-card border border-border rounded-2xl p-5 opacity-60"
+              className="animate-fade-in-up bg-card border border-border rounded-2xl p-5 opacity-60"
+              style={{ animationDelay: `${(i + activeTickets.length) * 100}ms` }}
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                 <h3 className="font-semibold text-foreground">{entry.competition}</h3>
@@ -105,7 +91,7 @@ export default function TicketsPage() {
                   </span>
                 ))}
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </section>

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { competitions } from '@/lib/mock-data';
 import { formatPrice, formatPriceShort, percentSold } from '@/lib/utils';
@@ -13,12 +12,7 @@ export default function AdminCompetitionsPage() {
 
   return (
     <div className="max-w-7xl mx-auto">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8"
-      >
+      <div className="animate-fade-in-up flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-1">Competitions</h1>
           <p className="text-muted">Manage all your competitions in one place.</p>
@@ -32,7 +26,7 @@ export default function AdminCompetitionsPage() {
           </svg>
           New Competition
         </Link>
-      </motion.div>
+      </div>
 
       {/* Filter tabs */}
       <div className="flex gap-1 bg-card border border-border rounded-xl p-1 mb-6 w-fit">

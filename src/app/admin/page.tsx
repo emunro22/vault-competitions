@@ -1,6 +1,3 @@
-'use client';
-
-import { motion } from 'framer-motion';
 import Link from 'next/link';
 
 const stats = [
@@ -27,41 +24,27 @@ const upcomingDraws = [
 export default function AdminDashboard() {
   return (
     <div className="max-w-7xl mx-auto">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="mb-8"
-      >
+      <div className="animate-fade-in-up mb-8">
         <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-1">Dashboard</h1>
         <p className="text-muted">Welcome back. Here&apos;s what&apos;s happening with ScotComps.</p>
-      </motion.div>
+      </div>
 
-      {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {stats.map((stat, i) => (
-          <motion.div
+          <div
             key={stat.label}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: i * 0.1 }}
-            className="bg-card border border-border rounded-xl p-5"
+            className="animate-fade-in-up bg-card border border-border rounded-xl p-5"
+            style={{ animationDelay: `${i * 100}ms` }}
           >
             <p className="text-sm text-muted mb-1">{stat.label}</p>
             <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
             <p className="text-xs text-muted mt-1">{stat.change}</p>
-          </motion.div>
+          </div>
         ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Recent Orders */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="lg:col-span-2"
-        >
+        <div className="animate-fade-in-up lg:col-span-2" style={{ animationDelay: '200ms' }}>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-foreground">Recent Orders</h2>
             <span className="text-xs text-muted">Live feed</span>
@@ -92,14 +75,9 @@ export default function AdminDashboard() {
               </table>
             </div>
           </div>
-        </motion.div>
+        </div>
 
-        {/* Upcoming Draws */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-        >
+        <div className="animate-fade-in-up" style={{ animationDelay: '300ms' }}>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-foreground">Upcoming Draws</h2>
             <Link href="/admin/draws" className="text-xs text-primary-light hover:text-primary transition-colors">
@@ -133,7 +111,6 @@ export default function AdminDashboard() {
             ))}
           </div>
 
-          {/* Quick Actions */}
           <div className="mt-6">
             <h2 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h2>
             <div className="space-y-2">
@@ -161,7 +138,7 @@ export default function AdminDashboard() {
               </Link>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

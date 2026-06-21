@@ -1,6 +1,3 @@
-'use client';
-
-import { motion } from 'framer-motion';
 import Link from 'next/link';
 
 const mockUser = {
@@ -22,23 +19,12 @@ const mockRecentTickets = [
 export default function AccountPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="mb-10"
-      >
+      <div className="animate-fade-in-up mb-10">
         <h1 className="text-3xl font-bold text-foreground mb-2">My Account</h1>
         <p className="text-muted">Welcome back, {mockUser.name}</p>
-      </motion.div>
+      </div>
 
-      {/* Stats */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10"
-      >
+      <div className="animate-fade-in-up grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10" style={{ animationDelay: '100ms' }}>
         {[
           { label: 'Total Entries', value: mockUser.totalEntries.toString() },
           { label: 'Competitions Won', value: mockUser.wins.toString() },
@@ -50,16 +36,10 @@ export default function AccountPage() {
             <p className="text-xs text-muted mt-1">{stat.label}</p>
           </div>
         ))}
-      </motion.div>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Recent Tickets */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="lg:col-span-2"
-        >
+        <div className="animate-fade-in-up lg:col-span-2" style={{ animationDelay: '200ms' }}>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold text-foreground">Recent Entries</h2>
             <Link href="/account/tickets" className="text-sm text-primary-light hover:text-primary transition-colors">
@@ -100,14 +80,9 @@ export default function AccountPage() {
               </table>
             </div>
           </div>
-        </motion.div>
+        </div>
 
-        {/* Profile Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-        >
+        <div className="animate-fade-in-up" style={{ animationDelay: '300ms' }}>
           <h2 className="text-xl font-semibold text-foreground mb-4">Profile</h2>
           <div className="bg-card border border-border rounded-2xl p-6 space-y-5">
             <div className="flex items-center gap-4 pb-5 border-b border-border">
@@ -129,7 +104,7 @@ export default function AccountPage() {
               Log Out
             </button>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

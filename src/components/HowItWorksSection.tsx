@@ -1,6 +1,4 @@
-'use client';
-
-import { motion } from 'framer-motion';
+import FadeIn from './FadeIn';
 
 const steps = [
   {
@@ -49,29 +47,20 @@ export default function HowItWorksSection() {
   return (
     <section className="py-20 lg:py-28">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-14"
-        >
+        <FadeIn className="text-center mb-14">
           <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
             How It Works
           </h2>
           <p className="text-muted text-lg max-w-2xl mx-auto">
             Winning is simple. Four easy steps and you could be our next big winner.
           </p>
-        </motion.div>
+        </FadeIn>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {steps.map((step, i) => (
-            <motion.div
+            <FadeIn
               key={step.number}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
+              delay={i * 100}
               className="relative bg-card border border-border rounded-2xl p-6 text-center hover:border-primary/50 transition-colors group"
             >
               <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-white text-sm font-bold px-3 py-1 rounded-lg">
@@ -82,7 +71,7 @@ export default function HowItWorksSection() {
               </div>
               <h3 className="text-lg font-semibold text-foreground mb-2">{step.title}</h3>
               <p className="text-sm text-muted leading-relaxed">{step.description}</p>
-            </motion.div>
+            </FadeIn>
           ))}
         </div>
       </div>

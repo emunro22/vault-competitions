@@ -1,7 +1,6 @@
 'use client';
 
 import { use } from 'react';
-import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { competitions } from '@/lib/mock-data';
 import { formatPrice, formatPriceShort } from '@/lib/utils';
@@ -36,12 +35,7 @@ export default function CompetitionDetailPage({
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-14">
-      {/* Breadcrumb */}
-      <motion.nav
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="flex items-center gap-2 text-sm text-muted mb-8"
-      >
+      <nav className="animate-fade-in flex items-center gap-2 text-sm text-muted mb-8">
         <Link href="/competitions" className="hover:text-foreground transition-colors">
           Competitions
         </Link>
@@ -49,17 +43,10 @@ export default function CompetitionDetailPage({
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
         </svg>
         <span className="text-foreground truncate">{competition.title}</span>
-      </motion.nav>
+      </nav>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
-        {/* Left Column - Image & Details */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
-          className="lg:col-span-3 space-y-6"
-        >
-          {/* Main Image */}
+        <div className="animate-fade-in-up lg:col-span-3 space-y-6">
           <div className="relative aspect-[16/10] bg-card rounded-2xl overflow-hidden border border-border">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
               <span className="text-8xl opacity-40">
@@ -82,7 +69,6 @@ export default function CompetitionDetailPage({
             </div>
           </div>
 
-          {/* Prize Info Cards */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             <div className="bg-card border border-border rounded-xl p-4">
               <p className="text-xs text-muted uppercase tracking-wider mb-1">Prize Value</p>
@@ -100,7 +86,6 @@ export default function CompetitionDetailPage({
             </div>
           </div>
 
-          {/* Title & Description */}
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-4">
               {competition.title}
@@ -110,7 +95,6 @@ export default function CompetitionDetailPage({
             </p>
           </div>
 
-          {/* Competition Details */}
           <div className="bg-card border border-border rounded-2xl p-6">
             <h2 className="text-lg font-semibold text-foreground mb-4">Competition Details</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -129,17 +113,10 @@ export default function CompetitionDetailPage({
               ))}
             </div>
           </div>
-        </motion.div>
+        </div>
 
-        {/* Right Column - Sticky Purchase Panel */}
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="lg:col-span-2"
-        >
+        <div className="animate-fade-in-up lg:col-span-2" style={{ animationDelay: '200ms' }}>
           <div className="lg:sticky lg:top-24 space-y-6">
-            {/* Countdown */}
             <div className="bg-card border border-border rounded-2xl p-6 text-center">
               <div className="flex items-center justify-center gap-2 mb-4">
                 <div className="w-2 h-2 rounded-full bg-success pulse-live" />
@@ -151,19 +128,17 @@ export default function CompetitionDetailPage({
               </div>
             </div>
 
-            {/* Progress */}
             <div className="bg-card border border-border rounded-2xl p-6">
               <ProgressBar sold={competition.ticketsSold} total={competition.totalTickets} />
             </div>
 
-            {/* Ticket Selector */}
             <TicketSelector
               ticketPrice={competition.ticketPrice}
               maxPerPerson={competition.maxPerPerson}
               remainingTickets={remaining}
             />
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

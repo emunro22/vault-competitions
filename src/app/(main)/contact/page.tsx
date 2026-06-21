@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
@@ -13,28 +12,17 @@ export default function ContactPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="text-center mb-12"
-      >
+      <div className="animate-fade-in-up text-center mb-12">
         <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
           Get In Touch
         </h1>
         <p className="text-muted text-lg max-w-2xl mx-auto">
           Have a question, feedback, or need support? We&apos;d love to hear from you.
         </p>
-      </motion.div>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
-        {/* Contact Info */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="lg:col-span-2 space-y-6"
-        >
+        <div className="animate-fade-in-up lg:col-span-2 space-y-6" style={{ animationDelay: '100ms' }}>
           {[
             {
               icon: (
@@ -55,7 +43,7 @@ export default function ContactPage() {
               ),
               title: 'Based In',
               value: 'Glasgow, Scotland',
-              sub: 'Proudly Scottish 🏴󠁧󠁢󠁳󠁣󠁴󠁿',
+              sub: 'Proudly Scottish',
             },
             {
               icon: (
@@ -80,7 +68,6 @@ export default function ContactPage() {
             </div>
           ))}
 
-          {/* Social */}
           <div className="bg-card border border-border rounded-xl p-5">
             <h3 className="font-medium text-foreground mb-3">Follow Us</h3>
             <div className="flex gap-3">
@@ -95,15 +82,9 @@ export default function ContactPage() {
               ))}
             </div>
           </div>
-        </motion.div>
+        </div>
 
-        {/* Contact Form */}
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="lg:col-span-3"
-        >
+        <div className="animate-fade-in-up lg:col-span-3" style={{ animationDelay: '200ms' }}>
           {submitted ? (
             <div className="bg-card border border-success/30 rounded-2xl p-10 text-center">
               <div className="text-5xl mb-4">✅</div>
@@ -184,7 +165,7 @@ export default function ContactPage() {
               </button>
             </form>
           )}
-        </motion.div>
+        </div>
       </div>
     </div>
   );

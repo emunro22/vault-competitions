@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 import { percentSold } from '@/lib/utils';
 
 interface ProgressBarProps {
@@ -10,6 +10,9 @@ interface ProgressBarProps {
 }
 
 export default function ProgressBar({ sold, total, showLabel = true }: ProgressBarProps) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const percent = percentSold(sold, total);
   const isHot = percent >= 80;
   const isWarm = percent >= 50;
@@ -27,17 +30,15 @@ export default function ProgressBar({ sold, total, showLabel = true }: ProgressB
         </div>
       )}
       <div className="w-full h-2.5 bg-background rounded-full overflow-hidden">
-        <motion.div
-          initial={{ width: 0 }}
-          animate={{ width: `${percent}%` }}
-          transition={{ duration: 1.2, ease: 'easeOut' }}
-          className={`h-full rounded-full ${
+        <div
+          className={`h-full rounded-full transition-[width] duration-1000 ease-out ${
             isHot
               ? 'bg-gradient-to-r from-accent to-danger'
               : isWarm
               ? 'bg-gradient-to-r from-success to-accent'
               : 'bg-gradient-to-r from-primary to-success'
           }`}
+          style={{ width: mounted ? `${percent}%` : '0%' }}
         />
       </div>
       {isHot && (

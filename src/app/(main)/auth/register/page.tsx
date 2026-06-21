@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 
 export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
@@ -19,13 +18,7 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-16">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md"
-      >
-        {/* Header */}
+      <div className="animate-fade-in-up w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-6">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center font-bold text-white text-xl">
@@ -36,7 +29,6 @@ export default function RegisterPage() {
           <p className="text-muted">Join ScotComps and start winning today</p>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-6 sm:p-8 space-y-5">
           {error && (
             <div className="bg-danger/10 border border-danger/20 text-danger text-sm rounded-xl p-3">
@@ -135,7 +127,7 @@ export default function RegisterPage() {
             Log in
           </Link>
         </p>
-      </motion.div>
+      </div>
     </div>
   );
 }

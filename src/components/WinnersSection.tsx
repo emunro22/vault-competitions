@@ -1,37 +1,26 @@
-'use client';
-
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 import { formatPriceShort } from '@/lib/utils';
 import { winners } from '@/lib/mock-data';
+import FadeIn from './FadeIn';
 
 export default function WinnersSection() {
   return (
     <section className="py-20 lg:py-28 bg-surface">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-14"
-        >
+        <FadeIn className="text-center mb-14">
           <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
             Recent Winners
           </h2>
           <p className="text-muted text-lg max-w-2xl mx-auto">
             Real people, real prizes. Check out some of our latest winners from across Scotland and the UK.
           </p>
-        </motion.div>
+        </FadeIn>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {winners.slice(0, 6).map((winner, i) => (
-            <motion.div
+            <FadeIn
               key={winner.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
+              delay={i * 100}
               className="bg-card border border-border rounded-2xl p-6 hover:border-accent/30 transition-colors"
             >
               <div className="flex items-center gap-4 mb-4">
@@ -57,17 +46,11 @@ export default function WinnersSection() {
                   year: 'numeric',
                 })}
               </p>
-            </motion.div>
+            </FadeIn>
           ))}
         </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="text-center mt-10"
-        >
+        <FadeIn className="text-center mt-10">
           <Link
             href="/winners"
             className="inline-flex items-center gap-2 px-6 py-3 bg-card border border-border hover:border-primary/50 text-foreground font-medium rounded-xl transition-all hover:scale-105"
@@ -77,7 +60,7 @@ export default function WinnersSection() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </Link>
-        </motion.div>
+        </FadeIn>
       </div>
     </section>
   );
