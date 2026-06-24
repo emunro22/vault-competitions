@@ -294,12 +294,12 @@ export const winners: Winner[] = [
 
 export const faqs = [
   {
-    question: 'How does Vault Competitions work?',
-    answer: 'Vault Competitions runs prize competitions where you purchase tickets for a chance to win incredible prizes. Each competition has a set number of tickets and a draw date. Once the minimum ticket threshold is met and the draw date arrives, we randomly select a winner using a verified random number generator. It\'s that simple!',
+    question: 'How does Clutch Competitions work?',
+    answer: 'Clutch Competitions runs prize competitions where you purchase tickets for a chance to win incredible prizes. Each competition has a set number of tickets and a draw date. Once the minimum ticket threshold is met and the draw date arrives, we randomly select a winner using a verified random number generator. It\'s that simple!',
   },
   {
-    question: 'Is Vault Competitions legitimate?',
-    answer: 'Absolutely! Vault Competitions is a registered UK company operating fully within UK competition law. All draws are conducted transparently using provably fair random number generation, and winners are announced on our website and social media channels.',
+    question: 'Is Clutch Competitions legitimate?',
+    answer: 'Absolutely! Clutch Competitions is a registered UK company operating fully within UK competition law. All draws are conducted transparently using provably fair random number generation, and winners are announced on our website and social media channels.',
   },
   {
     question: 'How are winners chosen?',

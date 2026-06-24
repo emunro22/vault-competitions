@@ -31,7 +31,7 @@ export default function ContactPage() {
                 </svg>
               ),
               title: 'Email Us',
-              value: 'hello@vaultcompetitions.co.uk',
+              value: 'hello@clutchcompetitions.co.uk',
               sub: 'We reply within 24 hours',
             },
             {

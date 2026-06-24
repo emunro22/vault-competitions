@@ -74,10 +74,10 @@ export default function Footer() {
           <div className="sm:col-span-2 lg:col-span-1">
             <Link href="/" className="flex items-center gap-2.5 mb-4">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-light flex items-center justify-center font-black text-background text-lg">
-                VC
+                CC
               </div>
               <span className="text-xl font-extrabold text-foreground">
-                Vault<span className="text-primary">Comps</span>
+                Clutch<span className="text-primary">Comps</span>
               </span>
             </Link>
             <p className="text-sm text-muted max-w-xs mb-6">
@@ -128,7 +128,7 @@ export default function Footer() {
               <span>Free postal entry available</span>
             </div>
             <p className="text-xs text-muted">
-              &copy; {new Date().getFullYear()} Vault Competitions Ltd. All rights reserved. Registered in the UK.
+              &copy; {new Date().getFullYear()} Clutch Competitions Ltd. All rights reserved. Registered in the UK.
             </p>
           </div>
         </div>

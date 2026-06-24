@@ -10,8 +10,8 @@ const montserrat = Montserrat({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Vault Competitions — Win Premium Prizes',
-    template: '%s | Vault Competitions',
+    default: 'Clutch Competitions — Win Premium Prizes',
+    template: '%s | Clutch Competitions',
   },
   description:
     'Win incredible prizes from dream cars to life-changing cash. The UK\'s most trusted competition platform with verified draws and real winners. Tickets from just £0.49.',
@@ -23,12 +23,12 @@ export const metadata: Metadata = {
     'win a car UK',
     'cash prizes UK',
     'online competitions UK',
-    'Vault Competitions',
+    'Clutch Competitions',
   ],
   openGraph: {
-    title: 'Vault Competitions — Win Premium Prizes',
+    title: 'Clutch Competitions — Win Premium Prizes',
     description: 'Win incredible prizes from dream cars to life-changing cash. Tickets from just £0.49.',
-    siteName: 'Vault Competitions',
+    siteName: 'Clutch Competitions',
     locale: 'en_GB',
     type: 'website',
   },

@@ -8,7 +8,7 @@ const mockUsers = [
   { id: '4', name: 'Emma Ross', email: 'emma@example.com', role: 'user' as const, entries: 156, spent: 31000, joined: '2025-09-01' },
   { id: '5', name: 'Mark Thomson', email: 'mark@example.com', role: 'user' as const, entries: 8, spent: 1290, joined: '2026-06-01' },
   { id: '6', name: 'Laura Burns', email: 'laura@example.com', role: 'user' as const, entries: 64, spent: 12800, joined: '2025-12-10' },
-  { id: '7', name: 'Admin User', email: 'admin@vaultcompetitions.co.uk', role: 'admin' as const, entries: 0, spent: 0, joined: '2025-08-01' },
+  { id: '7', name: 'Admin User', email: 'admin@clutchcompetitions.co.uk', role: 'admin' as const, entries: 0, spent: 0, joined: '2025-08-01' },
 ];
 
 export default function AdminUsersPage() {

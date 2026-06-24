@@ -22,11 +22,11 @@ export default function RegisterPage() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-6">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary-light flex items-center justify-center font-black text-background text-xl">
-              VC
+              CC
             </div>
           </Link>
           <h1 className="text-2xl font-black text-foreground mb-2">Create Your Account</h1>
-          <p className="text-muted font-medium">Join Vault Competitions and start winning today</p>
+          <p className="text-muted font-medium">Join Clutch Competitions and start winning today</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-6 sm:p-8 space-y-5">

@@ -50,10 +50,10 @@ export default function AdminSidebar() {
       <div className="mb-8 px-3">
         <Link href="/" className="flex items-center gap-2 mb-1">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-light flex items-center justify-center font-black text-background text-sm">
-            VC
+            CC
           </div>
           <span className="text-lg font-extrabold text-foreground">
-            Vault<span className="text-primary">Comps</span>
+            Clutch<span className="text-primary">Comps</span>
           </span>
         </Link>
         <p className="text-xs text-muted ml-10 font-semibold">Admin Portal</p>

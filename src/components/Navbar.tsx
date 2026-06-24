@@ -42,11 +42,11 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16 lg:h-20">
           <Link href="/" className="flex items-center gap-2.5 shrink-0">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-light flex items-center justify-center font-black text-background text-lg tracking-tight">
-              VC
+              CC
             </div>
             <div className="flex flex-col">
               <span className="text-xl font-extrabold tracking-tight text-foreground">
-                Vault<span className="text-primary">Comps</span>
+                Clutch<span className="text-primary">Comps</span>
               </span>
               <span className="text-[10px] text-muted -mt-1 hidden sm:block tracking-widest uppercase font-medium">
                 Premium Prize Competitions

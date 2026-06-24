@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 
-const ADMIN_PASSWORD = 'VaultComps2026!';
-const STORAGE_KEY = 'vc-admin-auth';
+const ADMIN_PASSWORD = 'ClutchComps2026!';
+const STORAGE_KEY = 'cc-admin-auth';
 
 export default function AdminAuth({ children }: { children: React.ReactNode }) {
   const [authenticated, setAuthenticated] = useState(false);
@@ -45,7 +45,7 @@ export default function AdminAuth({ children }: { children: React.ReactNode }) {
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
             <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-primary-light flex items-center justify-center font-black text-background text-2xl mx-auto mb-4">
-              VC
+              CC
             </div>
             <h1 className="text-2xl font-black text-foreground mb-2">Admin Access</h1>
             <p className="text-muted text-sm font-medium">Enter the admin password to continue</p>
