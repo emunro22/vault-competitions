@@ -10,6 +10,7 @@ export default function RegisterPage() {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -21,7 +22,7 @@ export default function RegisterPage() {
     setLoading(true);
     setError('');
 
-    const result = await register({ email, password, firstName, lastName, phone: phone || undefined });
+    const result = await register({ email, password, firstName, lastName, phone: phone || undefined, dateOfBirth });
     if (result.error) {
       setError(result.error);
       setLoading(false);
@@ -95,6 +96,18 @@ export default function RegisterPage() {
               onChange={(e) => setPhone(e.target.value)}
               className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors"
               placeholder="07xxx xxxxxx"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-foreground mb-1.5">Date of Birth</label>
+            <input
+              type="date"
+              value={dateOfBirth}
+              onChange={(e) => setDateOfBirth(e.target.value)}
+              required
+              max={new Date(Date.now() - 18 * 365.25 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
+              className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors"
             />
           </div>
 

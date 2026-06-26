@@ -120,10 +120,12 @@ export async function sendSignupNotification({
   customerName,
   customerEmail,
   phone,
+  dateOfBirth,
 }: {
   customerName: string;
   customerEmail: string;
   phone?: string;
+  dateOfBirth?: string;
 }) {
   const resend = getResend();
 
@@ -142,6 +144,7 @@ export async function sendSignupNotification({
         ${detailRow('Name', customerName)}
         ${detailRow('Email', customerEmail)}
         ${phone ? detailRow('Phone', phone) : ''}
+        ${dateOfBirth ? detailRow('Date of Birth', new Date(dateOfBirth).toLocaleDateString('en-GB')) : ''}
       </table>
     `),
   });

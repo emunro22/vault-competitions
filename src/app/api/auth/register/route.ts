@@ -9,11 +9,20 @@ import { v4 as uuid } from 'uuid';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, password, firstName, lastName, phone } = body;
+    const { email, password, firstName, lastName, phone, dateOfBirth } = body;
 
-    if (!email || !password || !firstName || !lastName) {
+    if (!email || !password || !firstName || !lastName || !dateOfBirth) {
       return Response.json(
-        { error: 'First name, last name, email and password are required' },
+        { error: 'All required fields must be filled in' },
+        { status: 400 }
+      );
+    }
+
+    const dob = new Date(dateOfBirth);
+    const age = Math.floor((Date.now() - dob.getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+    if (age < 18) {
+      return Response.json(
+        { error: 'You must be 18 or older to register' },
         { status: 400 }
       );
     }
@@ -48,6 +57,7 @@ export async function POST(request: Request) {
       passwordHash,
       name,
       phone: phone || null,
+      dateOfBirth: dateOfBirth,
       role: 'user',
     });
 
@@ -56,6 +66,7 @@ export async function POST(request: Request) {
       customerName: name,
       customerEmail: email.toLowerCase(),
       phone: phone || undefined,
+      dateOfBirth,
     }).catch((err) => console.error('Signup notification email failed:', err));
 
     const token = signToken({ userId: id, email: email.toLowerCase(), role: 'user' });
