@@ -8,7 +8,7 @@ function getResend() {
 }
 
 const NOTIFICATION_EMAIL = 'Decolow@icloud.com';
-const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'Clutch Competitions <onboarding@resend.dev>';
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'Clutch Competitions <noreply@clutchcompetitions.co.uk>';
 
 // ── Shared email wrapper matching the site's dark theme ──
 
