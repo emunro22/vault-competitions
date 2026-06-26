@@ -19,6 +19,26 @@ export async function POST(request: Request) {
 
     const body = await request.json();
     const items: CartItem[] = body.items;
+    const turnstileToken: string | undefined = body.turnstileToken;
+
+    // Verify Turnstile captcha
+    if (process.env.TURNSTILE_SECRET_KEY) {
+      if (!turnstileToken) {
+        return Response.json({ error: 'Captcha verification required' }, { status: 400 });
+      }
+      const verifyRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          secret: process.env.TURNSTILE_SECRET_KEY,
+          response: turnstileToken,
+        }),
+      });
+      const verifyData = await verifyRes.json();
+      if (!verifyData.success) {
+        return Response.json({ error: 'Captcha verification failed. Please try again.' }, { status: 400 });
+      }
+    }
 
     if (!items || items.length === 0) {
       return Response.json({ error: 'Cart is empty' }, { status: 400 });

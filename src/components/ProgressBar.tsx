@@ -57,7 +57,7 @@ export default function ProgressBar({ sold, total, showLabel = true, threshold }
       )}
       {threshold && !thresholdMet && (
         <p className="text-[10px] text-primary font-semibold mt-1">
-          {threshold}% must sell for draw to proceed
+          {threshold}% must sell — auto-extends if not met
         </p>
       )}
     </div>

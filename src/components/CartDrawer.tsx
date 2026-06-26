@@ -5,8 +5,11 @@ import { useAuth } from '@/lib/auth-context';
 import { formatPrice } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
+
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA';
 
 export default function CartDrawer() {
   const { cart, cartOpen, setCartOpen, removeFromCart, updateCartQuantity, cartTotal, cartCount, clearCart } = useStore();
@@ -14,6 +17,8 @@ export default function CartDrawer() {
   const router = useRouter();
   const [checkingOut, setCheckingOut] = useState(false);
   const [error, setError] = useState('');
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileInstance>(null);
 
   const handleCheckout = async () => {
     setError('');
@@ -21,6 +26,11 @@ export default function CartDrawer() {
     if (!user) {
       setCartOpen(false);
       router.push('/auth/login');
+      return;
+    }
+
+    if (!turnstileToken) {
+      setError('Please complete the verification check');
       return;
     }
 
@@ -35,6 +45,7 @@ export default function CartDrawer() {
             competitionId: item.competitionId,
             quantity: item.quantity,
           })),
+          turnstileToken,
         }),
       });
 
@@ -53,6 +64,8 @@ export default function CartDrawer() {
     } catch {
       setError('Something went wrong. Please try again.');
       setCheckingOut(false);
+      turnstileRef.current?.reset();
+      setTurnstileToken(null);
     }
   };
 
@@ -162,9 +175,21 @@ export default function CartDrawer() {
               <span className="text-muted font-semibold">Total</span>
               <span className="text-xl font-black text-foreground">{formatPrice(cartTotal)}</span>
             </div>
+            {user && (
+              <div className="flex justify-center">
+                <Turnstile
+                  ref={turnstileRef}
+                  siteKey={TURNSTILE_SITE_KEY}
+                  onSuccess={setTurnstileToken}
+                  onError={() => setTurnstileToken(null)}
+                  onExpire={() => setTurnstileToken(null)}
+                  options={{ theme: 'dark', size: 'compact' }}
+                />
+              </div>
+            )}
             <button
               onClick={handleCheckout}
-              disabled={checkingOut}
+              disabled={checkingOut || (!!user && !turnstileToken)}
               className="w-full py-4 bg-primary hover:bg-primary-light text-background font-black text-lg rounded-xl transition-all hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 glow-primary"
             >
               {checkingOut ? (

@@ -106,7 +106,7 @@ export default function CompetitionDetailPage({
                 <p className="text-xs text-muted font-medium leading-relaxed">
                   {thresholdMet
                     ? `This competition has passed the ${competition.minimumSoldPercentage}% minimum threshold. The draw will proceed as scheduled.`
-                    : `This competition requires ${competition.minimumSoldPercentage}% of tickets to be sold for the draw to go ahead. If the threshold is not met, all ticket holders will receive a full refund.`
+                    : `This competition requires ${competition.minimumSoldPercentage}% of tickets to be sold for the draw to go ahead. If the threshold is not met by the draw date, the competition will be automatically extended until it is reached.`
                   }
                 </p>
               </div>

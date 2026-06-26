@@ -323,7 +323,7 @@ export const faqs = [
   },
   {
     question: 'What happens if the minimum ticket threshold isn\'t met?',
-    answer: 'Each competition has a minimum sold percentage (typically 85%). If this threshold is not met by the draw date, the competition may be extended or all ticket holders will receive a full refund. The threshold is clearly displayed on each competition page.',
+    answer: 'Each competition has a minimum sold percentage (typically 85%). If this threshold is not met by the draw date, the competition is automatically extended until the threshold is reached. This means every competition will always have a winner. The threshold and countdown are clearly displayed on each competition page.',
   },
   {
     question: 'Can I choose the cash alternative instead of the prize?',

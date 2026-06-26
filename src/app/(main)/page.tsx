@@ -115,10 +115,10 @@ export default function HomePage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="bg-primary/5 border border-primary/20 rounded-2xl p-8">
             <div className="text-3xl mb-3">🛡️</div>
-            <h3 className="text-xl font-black text-foreground mb-2">Fair Play Guarantee</h3>
+            <h3 className="text-xl font-black text-foreground mb-2">Draw Guarantee</h3>
             <p className="text-sm text-muted max-w-lg mx-auto font-medium leading-relaxed">
               Every competition has a minimum ticket threshold (typically 85%). If the threshold isn&apos;t met by the draw date,
-              all ticket holders receive a full refund. This ensures every draw is fair and worthwhile.
+              the competition is automatically extended until it&apos;s reached — every competition will always have a winner.
             </p>
           </div>
         </div>
