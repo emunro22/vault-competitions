@@ -8,9 +8,47 @@ function getResend() {
 }
 
 const NOTIFICATION_EMAIL = 'Decolow@icloud.com';
-// Until a custom domain is verified with Resend, emails are sent from onboarding@resend.dev.
-// Once the domain is set up, update this to your verified sender address.
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'Clutch Competitions <onboarding@resend.dev>';
+
+// ── Shared email wrapper matching the site's dark theme ──
+
+function emailWrapper(content: string) {
+  return `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="margin: 0; padding: 0; background-color: #0A0E1A; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+    <!-- Header -->
+    <div style="text-align: center; margin-bottom: 32px;">
+      <div style="display: inline-block; width: 48px; height: 48px; background: linear-gradient(135deg, #F59E0B, #FBBF24); border-radius: 12px; line-height: 48px; font-weight: 900; color: #0A0E1A; font-size: 20px; letter-spacing: -1px;">CC</div>
+      <div style="margin-top: 12px;">
+        <span style="font-size: 20px; font-weight: 800; color: #F1F5F9; letter-spacing: -0.5px;">Clutch</span><span style="font-size: 20px; font-weight: 800; color: #F59E0B; letter-spacing: -0.5px;">Comps</span>
+      </div>
+    </div>
+    <!-- Card -->
+    <div style="background-color: #161D33; border: 1px solid #1E293B; border-radius: 16px; padding: 32px; margin-bottom: 24px;">
+      ${content}
+    </div>
+    <!-- Footer -->
+    <div style="text-align: center; padding-top: 16px;">
+      <p style="color: #94A3B8; font-size: 12px; margin: 0;">Clutch Competitions &mdash; Premium Prize Competitions</p>
+      <p style="color: #94A3B8; font-size: 11px; margin: 8px 0 0 0;">You must be 18+ to enter. Please play responsibly.</p>
+    </div>
+  </div>
+</body>
+</html>`;
+}
+
+function detailRow(label: string, value: string, highlight = false) {
+  return `
+    <tr>
+      <td style="padding: 10px 0; color: #94A3B8; font-size: 14px; border-bottom: 1px solid #1E293B;">${label}</td>
+      <td style="padding: 10px 0; font-weight: 700; font-size: 14px; text-align: right; border-bottom: 1px solid #1E293B; color: ${highlight ? '#F59E0B' : '#F1F5F9'};">${value}</td>
+    </tr>`;
+}
+
+// ── Order notifications ──
 
 export async function sendOrderNotification({
   customerName,
@@ -30,42 +68,105 @@ export async function sendOrderNotification({
   const total = `£${(totalPence / 100).toFixed(2)}`;
   const resend = getResend();
 
+  // Admin notification
   await resend.emails.send({
     from: FROM_EMAIL,
     to: NOTIFICATION_EMAIL,
-    subject: `New Order: ${quantity} tickets for ${competitionTitle}`,
-    html: `
-      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #10b981;">New Ticket Purchase</h2>
-        <table style="width: 100%; border-collapse: collapse;">
-          <tr><td style="padding: 8px 0; color: #6b7280;">Order ID</td><td style="padding: 8px 0; font-weight: bold;">${orderId}</td></tr>
-          <tr><td style="padding: 8px 0; color: #6b7280;">Customer</td><td style="padding: 8px 0; font-weight: bold;">${customerName}</td></tr>
-          <tr><td style="padding: 8px 0; color: #6b7280;">Email</td><td style="padding: 8px 0;">${customerEmail}</td></tr>
-          <tr><td style="padding: 8px 0; color: #6b7280;">Competition</td><td style="padding: 8px 0; font-weight: bold;">${competitionTitle}</td></tr>
-          <tr><td style="padding: 8px 0; color: #6b7280;">Tickets</td><td style="padding: 8px 0; font-weight: bold;">${quantity}</td></tr>
-          <tr><td style="padding: 8px 0; color: #6b7280;">Total</td><td style="padding: 8px 0; font-weight: bold; color: #10b981;">${total}</td></tr>
-        </table>
+    subject: `New Order: ${quantity} tickets — ${competitionTitle}`,
+    html: emailWrapper(`
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div style="display: inline-block; background-color: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 50%; width: 56px; height: 56px; line-height: 56px; font-size: 24px;">🎫</div>
+        <h1 style="color: #F1F5F9; font-size: 22px; font-weight: 800; margin: 16px 0 4px 0;">New Ticket Purchase</h1>
+        <p style="color: #94A3B8; font-size: 14px; margin: 0;">A customer just bought tickets</p>
       </div>
-    `,
+      <table style="width: 100%; border-collapse: collapse;">
+        ${detailRow('Order ID', orderId.slice(0, 8).toUpperCase())}
+        ${detailRow('Customer', customerName)}
+        ${detailRow('Email', customerEmail)}
+        ${detailRow('Competition', competitionTitle)}
+        ${detailRow('Tickets', quantity.toString())}
+        ${detailRow('Total', total, true)}
+      </table>
+    `),
   });
 
+  // Customer confirmation
   await resend.emails.send({
     from: FROM_EMAIL,
     to: customerEmail,
-    subject: `Your Clutch Competitions order confirmation — ${competitionTitle}`,
-    html: `
-      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #10b981;">Order Confirmed!</h2>
-        <p>Hi ${customerName},</p>
-        <p>Thanks for your purchase! Here are your order details:</p>
-        <table style="width: 100%; border-collapse: collapse;">
-          <tr><td style="padding: 8px 0; color: #6b7280;">Competition</td><td style="padding: 8px 0; font-weight: bold;">${competitionTitle}</td></tr>
-          <tr><td style="padding: 8px 0; color: #6b7280;">Tickets</td><td style="padding: 8px 0; font-weight: bold;">${quantity}</td></tr>
-          <tr><td style="padding: 8px 0; color: #6b7280;">Total Paid</td><td style="padding: 8px 0; font-weight: bold; color: #10b981;">${total}</td></tr>
-        </table>
-        <p style="margin-top: 24px;">Good luck! You'll be notified if you're the winner.</p>
-        <p style="color: #6b7280; font-size: 14px;">— Clutch Competitions</p>
+    subject: `Order confirmed — ${competitionTitle}`,
+    html: emailWrapper(`
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div style="display: inline-block; background-color: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 50%; width: 56px; height: 56px; line-height: 56px; font-size: 24px;">✅</div>
+        <h1 style="color: #F1F5F9; font-size: 22px; font-weight: 800; margin: 16px 0 4px 0;">Order Confirmed!</h1>
+        <p style="color: #94A3B8; font-size: 14px; margin: 0;">Hi ${customerName}, your tickets are secured</p>
       </div>
-    `,
+      <table style="width: 100%; border-collapse: collapse;">
+        ${detailRow('Competition', competitionTitle)}
+        ${detailRow('Tickets', quantity.toString())}
+        ${detailRow('Total Paid', total, true)}
+      </table>
+      <div style="margin-top: 24px; text-align: center;">
+        <p style="color: #10B981; font-size: 14px; font-weight: 700; margin: 0 0 8px 0;">Good luck! 🍀</p>
+        <p style="color: #94A3B8; font-size: 13px; margin: 0;">You'll be notified if you win. You can view your tickets in your account.</p>
+      </div>
+    `),
+  });
+}
+
+// ── Signup notification ──
+
+export async function sendSignupNotification({
+  customerName,
+  customerEmail,
+  phone,
+}: {
+  customerName: string;
+  customerEmail: string;
+  phone?: string;
+}) {
+  const resend = getResend();
+
+  // Admin notification
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to: NOTIFICATION_EMAIL,
+    subject: `New Signup: ${customerName} (${customerEmail})`,
+    html: emailWrapper(`
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div style="display: inline-block; background-color: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 50%; width: 56px; height: 56px; line-height: 56px; font-size: 24px;">👤</div>
+        <h1 style="color: #F1F5F9; font-size: 22px; font-weight: 800; margin: 16px 0 4px 0;">New User Registered</h1>
+        <p style="color: #94A3B8; font-size: 14px; margin: 0;">A new customer has signed up</p>
+      </div>
+      <table style="width: 100%; border-collapse: collapse;">
+        ${detailRow('Name', customerName)}
+        ${detailRow('Email', customerEmail)}
+        ${phone ? detailRow('Phone', phone) : ''}
+      </table>
+    `),
+  });
+
+  // Welcome email to customer
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to: customerEmail,
+    subject: `Welcome to Clutch Competitions!`,
+    html: emailWrapper(`
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div style="display: inline-block; background-color: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 50%; width: 56px; height: 56px; line-height: 56px; font-size: 24px;">🏆</div>
+        <h1 style="color: #F1F5F9; font-size: 22px; font-weight: 800; margin: 16px 0 4px 0;">Welcome, ${customerName.split(' ')[0]}!</h1>
+        <p style="color: #94A3B8; font-size: 14px; margin: 0;">Your account is ready to go</p>
+      </div>
+      <div style="text-align: center; margin-bottom: 24px;">
+        <p style="color: #F1F5F9; font-size: 15px; line-height: 1.6; margin: 0;">
+          You're all set to enter our premium prize competitions. From dream cars to life-changing cash — your next win could be just one ticket away.
+        </p>
+      </div>
+      <div style="text-align: center; margin-top: 28px;">
+        <div style="display: inline-block; background: linear-gradient(135deg, #F59E0B, #FBBF24); border-radius: 12px; padding: 14px 32px;">
+          <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://clutchcompetitions.co.uk'}/competitions" style="color: #0A0E1A; text-decoration: none; font-weight: 800; font-size: 15px;">Browse Competitions</a>
+        </div>
+      </div>
+    `),
   });
 }

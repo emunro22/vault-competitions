@@ -1,6 +1,7 @@
 import { db } from '@/lib/db';
 import { users } from '@/lib/db/schema';
 import { signToken, setAuthCookie } from '@/lib/auth';
+import { sendSignupNotification } from '@/lib/email';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import { v4 as uuid } from 'uuid';
@@ -49,6 +50,13 @@ export async function POST(request: Request) {
       phone: phone || null,
       role: 'user',
     });
+
+    // Send signup notification emails (non-blocking)
+    sendSignupNotification({
+      customerName: name,
+      customerEmail: email.toLowerCase(),
+      phone: phone || undefined,
+    }).catch((err) => console.error('Signup notification email failed:', err));
 
     const token = signToken({ userId: id, email: email.toLowerCase(), role: 'user' });
     const cookie = setAuthCookie(token);
