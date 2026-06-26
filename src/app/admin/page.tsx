@@ -1,27 +1,79 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
-const stats = [
-  { label: 'Active Competitions', value: '10', change: '+2 this week', color: 'text-primary' },
-  { label: 'Total Revenue', value: '£48,250', change: '+12.5% vs last month', color: 'text-success' },
-  { label: 'Total Users', value: '3,842', change: '+156 this week', color: 'text-accent-light' },
-  { label: 'Tickets Sold Today', value: '284', change: '+18% vs yesterday', color: 'text-primary' },
-];
+interface Stats {
+  totalUsers: number;
+  newUsersThisWeek: number;
+  activeCompetitions: number;
+  totalRevenuePence: number;
+  ticketsSoldToday: number;
+}
 
-const recentOrders = [
-  { id: 'ORD-001', user: 'Jamie M.', competition: 'BMW M4 Competition', tickets: 5, total: '£9.95', time: '2 min ago' },
-  { id: 'ORD-002', user: 'Sarah K.', competition: '£25,000 Cash Prize', tickets: 10, total: '£9.90', time: '8 min ago' },
-  { id: 'ORD-003', user: 'Craig D.', competition: 'Rolex Submariner', tickets: 3, total: '£3.87', time: '15 min ago' },
-  { id: 'ORD-004', user: 'Emma R.', competition: 'Maldives Holiday', tickets: 2, total: '£2.98', time: '23 min ago' },
-  { id: 'ORD-005', user: 'Mark T.', competition: 'PS5 Pro Gaming Setup', tickets: 8, total: '£6.32', time: '31 min ago' },
-];
+interface RecentOrder {
+  id: string;
+  user: string;
+  competition: string;
+  tickets: number;
+  total: string;
+  time: string;
+}
 
-const upcomingDraws = [
-  { competition: '£5,000 Cash Quickie', date: '3 Jul 2026', sold: '870/999', percent: 87, threshold: 75 },
-  { competition: 'Rolex Submariner', date: '5 Jul 2026', sold: '1,876/1,999', percent: 94, threshold: 90 },
-  { competition: 'MacBook Pro Bundle', date: '8 Jul 2026', sold: '1,287/1,999', percent: 64, threshold: 80 },
-];
+interface UpcomingDraw {
+  id: string;
+  competition: string;
+  date: string;
+  sold: string;
+  percent: number;
+  threshold: number;
+}
 
 export default function AdminDashboard() {
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [recentOrders, setRecentOrders] = useState<RecentOrder[]>([]);
+  const [upcomingDraws, setUpcomingDraws] = useState<UpcomingDraw[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/admin/stats')
+      .then((r) => r.json())
+      .then((data) => {
+        setStats(data.stats);
+        setRecentOrders(data.recentOrders || []);
+        setUpcomingDraws(data.upcomingDraws || []);
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto flex items-center justify-center min-h-[60vh]">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  const statCards = stats
+    ? [
+        { label: 'Active Competitions', value: stats.activeCompetitions.toString(), color: 'text-primary' },
+        { label: 'Total Revenue', value: `£${(stats.totalRevenuePence / 100).toLocaleString('en-GB', { minimumFractionDigits: 2 })}`, color: 'text-success' },
+        { label: 'Total Users', value: stats.totalUsers.toLocaleString(), color: 'text-accent-light' },
+        { label: 'Tickets Sold Today', value: stats.ticketsSoldToday.toString(), color: 'text-primary' },
+      ]
+    : [];
+
+  function timeAgo(dateStr: string) {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'Just now';
+    if (mins < 60) return `${mins} min ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs}h ago`;
+    return `${Math.floor(hrs / 24)}d ago`;
+  }
+
   return (
     <div className="max-w-7xl mx-auto">
       <div className="animate-fade-in-up mb-8">
@@ -30,7 +82,7 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {stats.map((stat, i) => (
+        {statCards.map((stat, i) => (
           <div
             key={stat.label}
             className="animate-fade-in-up bg-card border border-border rounded-xl p-5"
@@ -38,7 +90,6 @@ export default function AdminDashboard() {
           >
             <p className="text-sm text-muted mb-1 font-semibold">{stat.label}</p>
             <p className={`text-2xl font-black ${stat.color}`}>{stat.value}</p>
-            <p className="text-xs text-muted mt-1 font-medium">{stat.change}</p>
           </div>
         ))}
       </div>
@@ -62,15 +113,21 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {recentOrders.map((order) => (
-                    <tr key={order.id} className="border-b border-border/50 last:border-0 hover:bg-white/[0.02]">
-                      <td className="px-5 py-3.5 text-sm font-mono text-primary font-bold">{order.id}</td>
-                      <td className="px-5 py-3.5 text-sm text-foreground font-medium">{order.user}</td>
-                      <td className="px-5 py-3.5 text-sm text-muted hidden sm:table-cell truncate max-w-[200px] font-medium">{order.competition}</td>
-                      <td className="px-5 py-3.5 text-sm font-bold text-foreground">{order.total}</td>
-                      <td className="px-5 py-3.5 text-xs text-muted font-medium">{order.time}</td>
+                  {recentOrders.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="px-5 py-8 text-center text-sm text-muted">No orders yet</td>
                     </tr>
-                  ))}
+                  ) : (
+                    recentOrders.map((order) => (
+                      <tr key={order.id} className="border-b border-border/50 last:border-0 hover:bg-white/[0.02]">
+                        <td className="px-5 py-3.5 text-sm font-mono text-primary font-bold truncate max-w-[100px]">{order.id.slice(0, 8)}</td>
+                        <td className="px-5 py-3.5 text-sm text-foreground font-medium">{order.user}</td>
+                        <td className="px-5 py-3.5 text-sm text-muted hidden sm:table-cell truncate max-w-[200px] font-medium">{order.competition}</td>
+                        <td className="px-5 py-3.5 text-sm font-bold text-foreground">{order.total}</td>
+                        <td className="px-5 py-3.5 text-xs text-muted font-medium">{timeAgo(order.time)}</td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
@@ -85,39 +142,47 @@ export default function AdminDashboard() {
             </Link>
           </div>
           <div className="space-y-3">
-            {upcomingDraws.map((draw) => (
-              <div key={draw.competition} className="bg-card border border-border rounded-xl p-4">
-                <h3 className="text-sm font-bold text-foreground mb-1 truncate">{draw.competition}</h3>
-                <p className="text-xs text-muted mb-3 font-medium">{draw.date}</p>
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-xs text-muted font-medium">{draw.sold} sold</span>
-                  <div className="flex items-center gap-2">
-                    {draw.percent >= draw.threshold && (
-                      <span className="text-[10px] text-success font-bold">Threshold met</span>
-                    )}
-                    <span className={`text-xs font-black ${draw.percent >= 80 ? 'text-danger' : draw.percent >= 50 ? 'text-primary' : 'text-success'}`}>
-                      {draw.percent}%
-                    </span>
+            {upcomingDraws.length === 0 ? (
+              <div className="bg-card border border-border rounded-xl p-6 text-center text-sm text-muted">
+                No upcoming draws
+              </div>
+            ) : (
+              upcomingDraws.map((draw) => (
+                <div key={draw.id} className="bg-card border border-border rounded-xl p-4">
+                  <h3 className="text-sm font-bold text-foreground mb-1 truncate">{draw.competition}</h3>
+                  <p className="text-xs text-muted mb-3 font-medium">
+                    {new Date(draw.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  </p>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-xs text-muted font-medium">{draw.sold} sold</span>
+                    <div className="flex items-center gap-2">
+                      {draw.percent >= draw.threshold && (
+                        <span className="text-[10px] text-success font-bold">Threshold met</span>
+                      )}
+                      <span className={`text-xs font-black ${draw.percent >= 80 ? 'text-danger' : draw.percent >= 50 ? 'text-primary' : 'text-success'}`}>
+                        {draw.percent}%
+                      </span>
+                    </div>
+                  </div>
+                  <div className="relative w-full h-2 bg-background rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all ${
+                        draw.percent >= 80
+                          ? 'bg-gradient-to-r from-primary to-danger'
+                          : draw.percent >= 50
+                          ? 'bg-gradient-to-r from-success to-primary'
+                          : 'bg-gradient-to-r from-accent to-success'
+                      }`}
+                      style={{ width: `${draw.percent}%` }}
+                    />
+                    <div
+                      className="absolute top-0 bottom-0 w-0.5 bg-primary/60"
+                      style={{ left: `${draw.threshold}%` }}
+                    />
                   </div>
                 </div>
-                <div className="relative w-full h-2 bg-background rounded-full overflow-hidden">
-                  <div
-                    className={`h-full rounded-full transition-all ${
-                      draw.percent >= 80
-                        ? 'bg-gradient-to-r from-primary to-danger'
-                        : draw.percent >= 50
-                        ? 'bg-gradient-to-r from-success to-primary'
-                        : 'bg-gradient-to-r from-accent to-success'
-                    }`}
-                    style={{ width: `${draw.percent}%` }}
-                  />
-                  <div
-                    className="absolute top-0 bottom-0 w-0.5 bg-primary/60"
-                    style={{ left: `${draw.threshold}%` }}
-                  />
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
 
           <div className="mt-6">

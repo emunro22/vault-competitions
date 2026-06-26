@@ -1,16 +1,49 @@
-import Link from 'next/link';
+'use client';
 
-const mockTickets = [
-  { id: '1', competition: 'BMW M4 Competition or £60,000 Cash', ticketNumbers: [1234, 1235, 1236, 1237, 1238], drawDate: '2026-07-15', status: 'active' as const },
-  { id: '2', competition: '£25,000 Cash Prize', ticketNumbers: [456, 457, 458, 459, 460, 461, 462, 463, 464, 465], drawDate: '2026-07-10', status: 'active' as const },
-  { id: '3', competition: 'MacBook Pro M4 + iPad Pro Bundle', ticketNumbers: [789, 790, 791], drawDate: '2026-07-08', status: 'active' as const },
-  { id: '4', competition: '£10,000 Cash Quickie', ticketNumbers: [123, 124, 125, 126, 127, 128, 129, 130], drawDate: '2026-06-01', status: 'drawn' as const },
-  { id: '5', competition: 'PS5 Pro Gaming Setup', ticketNumbers: [55, 56], drawDate: '2026-05-20', status: 'drawn' as const },
-];
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useAuth } from '@/lib/auth-context';
+
+interface TicketEntry {
+  competitionId: string;
+  competition: string;
+  slug: string;
+  drawDate: string;
+  status: 'active' | 'drawn';
+  ticketNumbers: number[];
+}
 
 export default function TicketsPage() {
-  const activeTickets = mockTickets.filter((t) => t.status === 'active');
-  const pastTickets = mockTickets.filter((t) => t.status === 'drawn');
+  const { user, loading: authLoading } = useAuth();
+  const router = useRouter();
+  const [entries, setEntries] = useState<TicketEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/auth/login');
+      return;
+    }
+    if (user) {
+      fetch('/api/account/tickets')
+        .then((r) => r.json())
+        .then((data) => setEntries(data.entries || []))
+        .catch(console.error)
+        .finally(() => setLoading(false));
+    }
+  }, [user, authLoading, router]);
+
+  if (authLoading || loading) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 py-20 flex justify-center">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  const activeEntries = entries.filter((t) => t.status === 'active');
+  const pastEntries = entries.filter((t) => t.status === 'drawn');
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
@@ -29,72 +62,85 @@ export default function TicketsPage() {
       <section className="mb-12">
         <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-success pulse-live" />
-          Active Entries ({activeTickets.length})
+          Active Entries ({activeEntries.length})
         </h2>
-        <div className="space-y-4">
-          {activeTickets.map((entry, i) => (
-            <div
-              key={entry.id}
-              className="animate-fade-in-up bg-card border border-border rounded-2xl p-5"
-              style={{ animationDelay: `${i * 100}ms` }}
-            >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-                <h3 className="font-semibold text-foreground">{entry.competition}</h3>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-medium bg-success/10 text-success px-2.5 py-1 rounded-lg">
-                    Live
-                  </span>
-                  <span className="text-xs text-muted">
-                    Draw: {new Date(entry.drawDate).toLocaleDateString('en-GB')}
-                  </span>
+        {activeEntries.length === 0 ? (
+          <div className="bg-card border border-border rounded-2xl p-8 text-center">
+            <p className="text-muted mb-4">No active entries yet.</p>
+            <Link href="/competitions" className="text-primary font-bold hover:text-primary-light transition-colors">
+              Browse Competitions
+            </Link>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {activeEntries.map((entry, i) => (
+              <div
+                key={entry.competitionId}
+                className="animate-fade-in-up bg-card border border-border rounded-2xl p-5"
+                style={{ animationDelay: `${i * 100}ms` }}
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                  <Link href={`/competitions/${entry.slug}`} className="font-semibold text-foreground hover:text-primary transition-colors">
+                    {entry.competition}
+                  </Link>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-medium bg-success/10 text-success px-2.5 py-1 rounded-lg">
+                      Live
+                    </span>
+                    <span className="text-xs text-muted">
+                      Draw: {new Date(entry.drawDate).toLocaleDateString('en-GB')}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {entry.ticketNumbers.map((num) => (
+                    <span
+                      key={num}
+                      className="bg-background border border-border rounded-lg px-3 py-1.5 text-sm font-mono font-medium text-foreground"
+                    >
+                      #{String(num).padStart(4, '0')}
+                    </span>
+                  ))}
                 </div>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {entry.ticketNumbers.map((num) => (
-                  <span
-                    key={num}
-                    className="bg-background border border-border rounded-lg px-3 py-1.5 text-sm font-mono font-medium text-foreground"
-                  >
-                    #{String(num).padStart(4, '0')}
-                  </span>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
 
-      <section>
-        <h2 className="text-xl font-semibold text-foreground mb-4">
-          Past Entries ({pastTickets.length})
-        </h2>
-        <div className="space-y-4">
-          {pastTickets.map((entry, i) => (
-            <div
-              key={entry.id}
-              className="animate-fade-in-up bg-card border border-border rounded-2xl p-5 opacity-60"
-              style={{ animationDelay: `${(i + activeTickets.length) * 100}ms` }}
-            >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-                <h3 className="font-semibold text-foreground">{entry.competition}</h3>
-                <span className="text-xs font-medium bg-muted/10 text-muted px-2.5 py-1 rounded-lg w-fit">
-                  Drawn
-                </span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {entry.ticketNumbers.map((num) => (
-                  <span
-                    key={num}
-                    className="bg-background border border-border rounded-lg px-3 py-1.5 text-sm font-mono font-medium text-muted"
-                  >
-                    #{String(num).padStart(4, '0')}
+      {pastEntries.length > 0 && (
+        <section>
+          <h2 className="text-xl font-semibold text-foreground mb-4">
+            Past Entries ({pastEntries.length})
+          </h2>
+          <div className="space-y-4">
+            {pastEntries.map((entry, i) => (
+              <div
+                key={entry.competitionId}
+                className="animate-fade-in-up bg-card border border-border rounded-2xl p-5 opacity-60"
+                style={{ animationDelay: `${(i + activeEntries.length) * 100}ms` }}
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                  <h3 className="font-semibold text-foreground">{entry.competition}</h3>
+                  <span className="text-xs font-medium bg-muted/10 text-muted px-2.5 py-1 rounded-lg w-fit">
+                    Drawn
                   </span>
-                ))}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {entry.ticketNumbers.map((num) => (
+                    <span
+                      key={num}
+                      className="bg-background border border-border rounded-lg px-3 py-1.5 text-sm font-mono font-medium text-muted"
+                    >
+                      #{String(num).padStart(4, '0')}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      </section>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

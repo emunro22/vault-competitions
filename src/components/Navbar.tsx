@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useStore } from '@/lib/store';
+import { useAuth } from '@/lib/auth-context';
 
 const navLinks = [
   { href: '/competitions', label: 'Competitions' },
@@ -33,8 +34,95 @@ function CartButton() {
   );
 }
 
+function UserMenu() {
+  const { user, loading, logout } = useAuth();
+  const [open, setOpen] = useState(false);
+
+  if (loading) return null;
+
+  if (!user) {
+    return (
+      <div className="hidden lg:flex items-center gap-3">
+        <Link
+          href="/auth/login"
+          className="px-4 py-2 text-sm font-semibold text-muted hover:text-foreground transition-colors"
+        >
+          Log In
+        </Link>
+        <Link
+          href="/auth/register"
+          className="px-5 py-2.5 text-sm font-bold bg-primary hover:bg-primary-light text-background rounded-xl transition-all hover:scale-105 glow-primary"
+        >
+          Sign Up
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="hidden lg:block relative">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-white/5 transition-colors"
+      >
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary-light flex items-center justify-center text-background text-sm font-black">
+          {user.name[0]}
+        </div>
+        <span className="text-sm font-semibold text-foreground max-w-[120px] truncate">
+          {user.name.split(' ')[0]}
+        </span>
+        <svg className="w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {open && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+          <div className="absolute right-0 top-full mt-2 w-48 bg-card border border-border rounded-xl shadow-xl z-50 py-1">
+            <Link
+              href="/account"
+              onClick={() => setOpen(false)}
+              className="block px-4 py-2.5 text-sm font-medium text-foreground hover:bg-white/5 transition-colors"
+            >
+              My Account
+            </Link>
+            <Link
+              href="/account/tickets"
+              onClick={() => setOpen(false)}
+              className="block px-4 py-2.5 text-sm font-medium text-foreground hover:bg-white/5 transition-colors"
+            >
+              My Tickets
+            </Link>
+            {user.role === 'admin' && (
+              <Link
+                href="/admin"
+                onClick={() => setOpen(false)}
+                className="block px-4 py-2.5 text-sm font-medium text-primary hover:bg-white/5 transition-colors"
+              >
+                Admin Portal
+              </Link>
+            )}
+            <div className="border-t border-border my-1" />
+            <button
+              onClick={async () => {
+                setOpen(false);
+                await logout();
+              }}
+              className="block w-full text-left px-4 py-2.5 text-sm font-medium text-danger hover:bg-white/5 transition-colors"
+            >
+              Log Out
+            </button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user, logout } = useAuth();
 
   return (
     <nav className="sticky top-0 z-50 bg-surface/90 backdrop-blur-xl border-b border-border">
@@ -68,20 +156,7 @@ export default function Navbar() {
 
           <div className="flex items-center gap-2">
             <CartButton />
-            <div className="hidden lg:flex items-center gap-3">
-              <Link
-                href="/auth/login"
-                className="px-4 py-2 text-sm font-semibold text-muted hover:text-foreground transition-colors"
-              >
-                Log In
-              </Link>
-              <Link
-                href="/auth/register"
-                className="px-5 py-2.5 text-sm font-bold bg-primary hover:bg-primary-light text-background rounded-xl transition-all hover:scale-105 glow-primary"
-              >
-                Sign Up
-              </Link>
-            </div>
+            <UserMenu />
 
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
@@ -102,7 +177,7 @@ export default function Navbar() {
 
       <div
         className={`lg:hidden overflow-hidden transition-all duration-200 ease-in-out bg-surface border-t border-border ${
-          mobileOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+          mobileOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
         <div className="px-4 py-4 space-y-1">
@@ -116,21 +191,60 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
-          <div className="pt-4 border-t border-border flex gap-3">
-            <Link
-              href="/auth/login"
-              onClick={() => setMobileOpen(false)}
-              className="flex-1 text-center px-4 py-3 text-sm font-semibold text-foreground border border-border rounded-xl hover:bg-white/5 transition-colors"
-            >
-              Log In
-            </Link>
-            <Link
-              href="/auth/register"
-              onClick={() => setMobileOpen(false)}
-              className="flex-1 text-center px-4 py-3 text-sm font-bold bg-primary text-background rounded-xl hover:bg-primary-light transition-colors"
-            >
-              Sign Up
-            </Link>
+          <div className="pt-4 border-t border-border">
+            {user ? (
+              <div className="space-y-1">
+                <Link
+                  href="/account"
+                  onClick={() => setMobileOpen(false)}
+                  className="block px-4 py-3 text-sm font-semibold text-foreground hover:bg-white/5 rounded-lg transition-colors"
+                >
+                  My Account
+                </Link>
+                <Link
+                  href="/account/tickets"
+                  onClick={() => setMobileOpen(false)}
+                  className="block px-4 py-3 text-sm font-semibold text-muted hover:text-foreground hover:bg-white/5 rounded-lg transition-colors"
+                >
+                  My Tickets
+                </Link>
+                {user.role === 'admin' && (
+                  <Link
+                    href="/admin"
+                    onClick={() => setMobileOpen(false)}
+                    className="block px-4 py-3 text-sm font-semibold text-primary hover:bg-white/5 rounded-lg transition-colors"
+                  >
+                    Admin Portal
+                  </Link>
+                )}
+                <button
+                  onClick={async () => {
+                    setMobileOpen(false);
+                    await logout();
+                  }}
+                  className="block w-full text-left px-4 py-3 text-sm font-semibold text-danger hover:bg-white/5 rounded-lg transition-colors"
+                >
+                  Log Out
+                </button>
+              </div>
+            ) : (
+              <div className="flex gap-3">
+                <Link
+                  href="/auth/login"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex-1 text-center px-4 py-3 text-sm font-semibold text-foreground border border-border rounded-xl hover:bg-white/5 transition-colors"
+                >
+                  Log In
+                </Link>
+                <Link
+                  href="/auth/register"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex-1 text-center px-4 py-3 text-sm font-bold bg-primary text-background rounded-xl hover:bg-primary-light transition-colors"
+                >
+                  Sign Up
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>

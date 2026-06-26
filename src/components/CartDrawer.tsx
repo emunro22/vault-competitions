@@ -1,25 +1,59 @@
 'use client';
 
 import { useStore } from '@/lib/store';
+import { useAuth } from '@/lib/auth-context';
 import { formatPrice } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function CartDrawer() {
-  const { cart, cartOpen, setCartOpen, removeFromCart, updateCartQuantity, cartTotal, cartCount, checkout } = useStore();
+  const { cart, cartOpen, setCartOpen, removeFromCart, updateCartQuantity, cartTotal, cartCount, clearCart } = useStore();
+  const { user } = useAuth();
+  const router = useRouter();
   const [checkingOut, setCheckingOut] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
 
   const handleCheckout = async () => {
+    setError('');
+
+    if (!user) {
+      setCartOpen(false);
+      router.push('/auth/login');
+      return;
+    }
+
     setCheckingOut(true);
-    await new Promise((r) => setTimeout(r, 1500));
-    checkout();
-    setCheckingOut(false);
-    setSuccess(true);
-    setTimeout(() => {
-      setSuccess(false);
-    }, 3000);
+
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: cart.map((item) => ({
+            competitionId: item.competitionId,
+            quantity: item.quantity,
+          })),
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || 'Checkout failed');
+        setCheckingOut(false);
+        return;
+      }
+
+      if (data.url) {
+        clearCart();
+        window.location.href = data.url;
+      }
+    } catch {
+      setError('Something went wrong. Please try again.');
+      setCheckingOut(false);
+    }
   };
 
   if (!cartOpen) return null;
@@ -45,24 +79,7 @@ export default function CartDrawer() {
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto">
-          {success ? (
-            <div className="flex flex-col items-center justify-center h-full p-6 text-center">
-              <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mb-4">
-                <svg className="w-8 h-8 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-black text-foreground mb-2">Order Complete!</h3>
-              <p className="text-muted font-medium mb-6">Your tickets have been confirmed. Good luck!</p>
-              <Link
-                href="/account/tickets"
-                onClick={() => setCartOpen(false)}
-                className="px-6 py-3 bg-primary hover:bg-primary-light text-background font-bold rounded-xl transition-colors"
-              >
-                View My Tickets
-              </Link>
-            </div>
-          ) : cart.length === 0 ? (
+          {cart.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full p-6 text-center">
               <div className="text-5xl mb-4">🎫</div>
               <h3 className="text-lg font-bold text-foreground mb-2">Cart is empty</h3>
@@ -134,8 +151,13 @@ export default function CartDrawer() {
         </div>
 
         {/* Footer */}
-        {cart.length > 0 && !success && (
+        {cart.length > 0 && (
           <div className="border-t border-border p-4 space-y-4">
+            {error && (
+              <div className="bg-danger/10 border border-danger/20 text-danger text-sm font-semibold rounded-xl p-3">
+                {error}
+              </div>
+            )}
             <div className="flex items-center justify-between">
               <span className="text-muted font-semibold">Total</span>
               <span className="text-xl font-black text-foreground">{formatPrice(cartTotal)}</span>
@@ -151,8 +173,10 @@ export default function CartDrawer() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                   </svg>
-                  Processing...
+                  Redirecting to payment...
                 </span>
+              ) : !user ? (
+                'Log in to Checkout'
               ) : (
                 `Checkout — ${formatPrice(cartTotal)}`
               )}

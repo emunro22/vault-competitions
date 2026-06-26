@@ -1,35 +1,60 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useAuth } from '@/lib/auth-context';
 
-const mockUser = {
-  name: 'John Smith',
-  email: 'john@example.com',
-  memberSince: '2026-01-15',
-  totalEntries: 47,
-  totalSpent: 12500,
-  wins: 1,
-};
-
-const mockRecentTickets = [
-  { id: '1', competition: 'BMW M4 Competition', tickets: 5, date: '2026-06-20', status: 'active' },
-  { id: '2', competition: '£25,000 Cash Prize', tickets: 10, date: '2026-06-18', status: 'active' },
-  { id: '3', competition: 'MacBook Pro M4 Bundle', tickets: 3, date: '2026-06-15', status: 'active' },
-  { id: '4', competition: '£10,000 Cash Quickie', tickets: 8, date: '2026-06-10', status: 'drawn' },
-];
+interface AccountData {
+  user: { id: string; name: string; email: string };
+  stats: { totalEntries: number; totalSpent: number; wins: number };
+  recentOrders: { id: string; competition: string; tickets: number; date: string; status: string }[];
+}
 
 export default function AccountPage() {
+  const { user, loading: authLoading, logout } = useAuth();
+  const router = useRouter();
+  const [data, setData] = useState<AccountData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/auth/login');
+      return;
+    }
+    if (user) {
+      fetch('/api/account')
+        .then((r) => r.json())
+        .then(setData)
+        .catch(console.error)
+        .finally(() => setLoading(false));
+    }
+  }, [user, authLoading, router]);
+
+  if (authLoading || loading || !user) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-20 flex justify-center">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  const stats = data?.stats || { totalEntries: 0, totalSpent: 0, wins: 0 };
+  const recentOrders = data?.recentOrders || [];
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
       <div className="animate-fade-in-up mb-10">
         <h1 className="text-3xl font-black text-foreground mb-2">My Account</h1>
-        <p className="text-muted font-medium">Welcome back, {mockUser.name}</p>
+        <p className="text-muted font-medium">Welcome back, {user.name}</p>
       </div>
 
       <div className="animate-fade-in-up grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10" style={{ animationDelay: '100ms' }}>
         {[
-          { label: 'Total Entries', value: mockUser.totalEntries.toString() },
-          { label: 'Competitions Won', value: mockUser.wins.toString() },
-          { label: 'Total Spent', value: `£${(mockUser.totalSpent / 100).toFixed(2)}` },
-          { label: 'Member Since', value: new Date(mockUser.memberSince).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) },
+          { label: 'Total Entries', value: stats.totalEntries.toString() },
+          { label: 'Competitions Won', value: stats.wins.toString() },
+          { label: 'Total Spent', value: `£${(stats.totalSpent / 100).toFixed(2)}` },
+          { label: 'Account Type', value: user.role === 'admin' ? 'Admin' : 'Member' },
         ].map((stat) => (
           <div key={stat.label} className="bg-card border border-border rounded-xl p-5">
             <p className="text-2xl font-black text-foreground">{stat.value}</p>
@@ -58,24 +83,32 @@ export default function AccountPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {mockRecentTickets.map((ticket) => (
-                    <tr key={ticket.id} className="border-b border-border/50 last:border-0 hover:bg-white/[0.02]">
-                      <td className="px-5 py-4 text-sm text-foreground font-semibold">{ticket.competition}</td>
-                      <td className="px-5 py-4 text-sm text-muted font-medium">{ticket.tickets}</td>
-                      <td className="px-5 py-4 text-sm text-muted font-medium">
-                        {new Date(ticket.date).toLocaleDateString('en-GB')}
-                      </td>
-                      <td className="px-5 py-4">
-                        <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${
-                          ticket.status === 'active'
-                            ? 'bg-success/10 text-success'
-                            : 'bg-muted/10 text-muted'
-                        }`}>
-                          {ticket.status === 'active' ? 'Live' : 'Drawn'}
-                        </span>
+                  {recentOrders.length === 0 ? (
+                    <tr>
+                      <td colSpan={4} className="px-5 py-8 text-center text-sm text-muted">
+                        No entries yet. <Link href="/competitions" className="text-primary font-bold">Browse competitions</Link>
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    recentOrders.map((order) => (
+                      <tr key={order.id} className="border-b border-border/50 last:border-0 hover:bg-white/[0.02]">
+                        <td className="px-5 py-4 text-sm text-foreground font-semibold">{order.competition}</td>
+                        <td className="px-5 py-4 text-sm text-muted font-medium">{order.tickets}</td>
+                        <td className="px-5 py-4 text-sm text-muted font-medium">
+                          {new Date(order.date).toLocaleDateString('en-GB')}
+                        </td>
+                        <td className="px-5 py-4">
+                          <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${
+                            order.status === 'active'
+                              ? 'bg-success/10 text-success'
+                              : 'bg-muted/10 text-muted'
+                          }`}>
+                            {order.status === 'active' ? 'Live' : 'Drawn'}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
@@ -87,20 +120,28 @@ export default function AccountPage() {
           <div className="bg-card border border-border rounded-2xl p-6 space-y-5">
             <div className="flex items-center gap-4 pb-5 border-b border-border">
               <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary to-primary-light flex items-center justify-center text-background text-xl font-black">
-                {mockUser.name[0]}
+                {user.name[0]}
               </div>
               <div>
-                <p className="font-bold text-foreground">{mockUser.name}</p>
-                <p className="text-sm text-muted font-medium">{mockUser.email}</p>
+                <p className="font-bold text-foreground">{user.name}</p>
+                <p className="text-sm text-muted font-medium">{user.email}</p>
               </div>
             </div>
-            <button className="w-full py-2.5 bg-background border border-border text-foreground text-sm font-bold rounded-xl hover:border-primary/50 transition-colors">
-              Edit Profile
-            </button>
-            <button className="w-full py-2.5 bg-background border border-border text-foreground text-sm font-bold rounded-xl hover:border-primary/50 transition-colors">
-              Change Password
-            </button>
-            <button className="w-full py-2.5 bg-danger/10 border border-danger/20 text-danger text-sm font-bold rounded-xl hover:bg-danger/20 transition-colors">
+            {user.role === 'admin' && (
+              <Link
+                href="/admin"
+                className="block w-full py-2.5 bg-primary/10 border border-primary/20 text-primary text-sm font-bold rounded-xl text-center hover:bg-primary/20 transition-colors"
+              >
+                Admin Portal
+              </Link>
+            )}
+            <button
+              onClick={async () => {
+                await logout();
+                router.push('/');
+              }}
+              className="w-full py-2.5 bg-danger/10 border border-danger/20 text-danger text-sm font-bold rounded-xl hover:bg-danger/20 transition-colors"
+            >
               Log Out
             </button>
           </div>

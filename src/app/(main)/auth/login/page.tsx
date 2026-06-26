@@ -1,21 +1,30 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useAuth } from '@/lib/auth-context';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { login } = useAuth();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-    await new Promise((r) => setTimeout(r, 1000));
-    setError('Login functionality requires database connection. Please configure your .env file.');
-    setLoading(false);
+
+    const result = await login(email, password);
+    if (result.error) {
+      setError(result.error);
+      setLoading(false);
+    } else {
+      router.push('/account');
+    }
   };
 
   return (
@@ -55,9 +64,6 @@ export default function LoginPage() {
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <label className="text-sm font-semibold text-foreground">Password</label>
-              <a href="#" className="text-xs text-primary hover:text-primary-light font-semibold transition-colors">
-                Forgot password?
-              </a>
             </div>
             <input
               type="password"

@@ -1,7 +1,7 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
-import { competitions as initialCompetitions, type Competition } from './mock-data';
+import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
+import type { Competition } from './mock-data';
 import { formatPrice } from './utils';
 
 export interface CartItem {
@@ -14,6 +14,7 @@ export interface CartItem {
 
 interface StoreContextType {
   competitions: Competition[];
+  competitionsLoading: boolean;
   cart: CartItem[];
   cartOpen: boolean;
   setCartOpen: (open: boolean) => void;
@@ -21,21 +22,29 @@ interface StoreContextType {
   removeFromCart: (competitionId: string) => void;
   updateCartQuantity: (competitionId: string, quantity: number) => void;
   clearCart: () => void;
-  checkout: () => void;
   cartTotal: number;
   cartCount: number;
-  lastOrder: CartItem[] | null;
 }
 
 const StoreContext = createContext<StoreContextType | null>(null);
 
 export function StoreProvider({ children }: { children: ReactNode }) {
-  const [competitions, setCompetitions] = useState<Competition[]>(
-    () => initialCompetitions.map((c) => ({ ...c }))
-  );
+  const [competitions, setCompetitions] = useState<Competition[]>([]);
+  const [competitionsLoading, setCompetitionsLoading] = useState(true);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
-  const [lastOrder, setLastOrder] = useState<CartItem[] | null>(null);
+
+  useEffect(() => {
+    fetch('/api/competitions')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.competitions) {
+          setCompetitions(data.competitions);
+        }
+      })
+      .catch(console.error)
+      .finally(() => setCompetitionsLoading(false));
+  }, []);
 
   const addToCart = useCallback((item: CartItem) => {
     setCart((prev) => {
@@ -72,20 +81,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setCart([]);
   }, []);
 
-  const checkout = useCallback(() => {
-    setCompetitions((prev) =>
-      prev.map((comp) => {
-        const cartItem = cart.find((i) => i.competitionId === comp.id);
-        if (!cartItem) return comp;
-        const newSold = Math.min(comp.ticketsSold + cartItem.quantity, comp.totalTickets);
-        return { ...comp, ticketsSold: newSold };
-      })
-    );
-    setLastOrder([...cart]);
-    setCart([]);
-    setCartOpen(false);
-  }, [cart]);
-
   const cartTotal = cart.reduce((sum, item) => sum + item.ticketPrice * item.quantity, 0);
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -93,6 +88,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     <StoreContext.Provider
       value={{
         competitions,
+        competitionsLoading,
         cart,
         cartOpen,
         setCartOpen,
@@ -100,10 +96,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         removeFromCart,
         updateCartQuantity,
         clearCart,
-        checkout,
         cartTotal,
         cartCount,
-        lastOrder,
       }}
     >
       {children}

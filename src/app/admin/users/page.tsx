@@ -1,24 +1,50 @@
 'use client';
 
-import { useState } from 'react';
-const mockUsers = [
-  { id: '1', name: 'Jamie McGregor', email: 'jamie@example.com', role: 'user' as const, entries: 47, spent: 9450, joined: '2026-01-15' },
-  { id: '2', name: 'Sarah Kennedy', email: 'sarah@example.com', role: 'user' as const, entries: 92, spent: 18200, joined: '2025-11-20' },
-  { id: '3', name: 'Craig Davidson', email: 'craig@example.com', role: 'user' as const, entries: 23, spent: 4150, joined: '2026-03-08' },
-  { id: '4', name: 'Emma Ross', email: 'emma@example.com', role: 'user' as const, entries: 156, spent: 31000, joined: '2025-09-01' },
-  { id: '5', name: 'Mark Thomson', email: 'mark@example.com', role: 'user' as const, entries: 8, spent: 1290, joined: '2026-06-01' },
-  { id: '6', name: 'Laura Burns', email: 'laura@example.com', role: 'user' as const, entries: 64, spent: 12800, joined: '2025-12-10' },
-  { id: '7', name: 'Admin User', email: 'admin@clutchcompetitions.co.uk', role: 'admin' as const, entries: 0, spent: 0, joined: '2025-08-01' },
-];
+import { useState, useEffect } from 'react';
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: 'user' | 'admin';
+  phone: string | null;
+  createdAt: string;
+  totalEntries: number;
+  totalSpent: number;
+}
 
 export default function AdminUsersPage() {
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
 
-  const filtered = mockUsers.filter(
+  useEffect(() => {
+    fetch('/api/admin/users')
+      .then((r) => r.json())
+      .then((data) => setUsers(data.users || []))
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+
+  const filtered = users.filter(
     (u) =>
       u.name.toLowerCase().includes(search.toLowerCase()) ||
       u.email.toLowerCase().includes(search.toLowerCase())
   );
+
+  const totalUsers = users.length;
+  const adminCount = users.filter((u) => u.role === 'admin').length;
+  const thisWeek = users.filter(
+    (u) => Date.now() - new Date(u.createdAt).getTime() < 7 * 24 * 60 * 60 * 1000
+  ).length;
+
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto flex items-center justify-center min-h-[60vh]">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -29,10 +55,10 @@ export default function AdminUsersPage() {
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
         {[
-          { label: 'Total Users', value: '3,842' },
-          { label: 'New This Week', value: '156' },
-          { label: 'Active Today', value: '284' },
-          { label: 'Admin Users', value: '3' },
+          { label: 'Total Users', value: totalUsers.toLocaleString() },
+          { label: 'New This Week', value: thisWeek.toString() },
+          { label: 'Admin Users', value: adminCount.toString() },
+          { label: 'Regular Users', value: (totalUsers - adminCount).toString() },
         ].map((stat) => (
           <div key={stat.label} className="bg-card border border-border rounded-xl p-4">
             <p className="text-xl font-black text-foreground">{stat.value}</p>
@@ -61,44 +87,46 @@ export default function AdminUsersPage() {
                 <th className="text-left text-xs font-bold text-muted uppercase tracking-wider px-5 py-3 hidden md:table-cell">Entries</th>
                 <th className="text-left text-xs font-bold text-muted uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Total Spent</th>
                 <th className="text-left text-xs font-bold text-muted uppercase tracking-wider px-5 py-3 hidden md:table-cell">Joined</th>
-                <th className="text-right text-xs font-bold text-muted uppercase tracking-wider px-5 py-3">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filtered.map((user) => (
-                <tr key={user.id} className="border-b border-border/50 last:border-0 hover:bg-white/[0.02]">
-                  <td className="px-5 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-primary-light flex items-center justify-center text-background text-sm font-black shrink-0">
-                        {user.name[0]}
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-foreground">{user.name}</p>
-                        <p className="text-xs text-muted font-medium">{user.email}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-5 py-4 hidden sm:table-cell">
-                    <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${
-                      user.role === 'admin' ? 'bg-primary/10 text-primary' : 'bg-background border border-border text-muted'
-                    }`}>
-                      {user.role}
-                    </span>
-                  </td>
-                  <td className="px-5 py-4 text-sm text-muted hidden md:table-cell font-medium">{user.entries}</td>
-                  <td className="px-5 py-4 text-sm text-foreground hidden lg:table-cell font-bold">
-                    £{(user.spent / 100).toFixed(2)}
-                  </td>
-                  <td className="px-5 py-4 text-xs text-muted hidden md:table-cell font-medium">
-                    {new Date(user.joined).toLocaleDateString('en-GB')}
-                  </td>
-                  <td className="px-5 py-4 text-right">
-                    <button className="text-xs text-primary hover:text-primary-light font-bold transition-colors">
-                      View
-                    </button>
+              {filtered.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-5 py-8 text-center text-sm text-muted">
+                    {search ? 'No users match your search' : 'No users yet'}
                   </td>
                 </tr>
-              ))}
+              ) : (
+                filtered.map((user) => (
+                  <tr key={user.id} className="border-b border-border/50 last:border-0 hover:bg-white/[0.02]">
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-primary-light flex items-center justify-center text-background text-sm font-black shrink-0">
+                          {user.name[0]}
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-foreground">{user.name}</p>
+                          <p className="text-xs text-muted font-medium">{user.email}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-5 py-4 hidden sm:table-cell">
+                      <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${
+                        user.role === 'admin' ? 'bg-primary/10 text-primary' : 'bg-background border border-border text-muted'
+                      }`}>
+                        {user.role}
+                      </span>
+                    </td>
+                    <td className="px-5 py-4 text-sm text-muted hidden md:table-cell font-medium">{user.totalEntries}</td>
+                    <td className="px-5 py-4 text-sm text-foreground hidden lg:table-cell font-bold">
+                      £{(user.totalSpent / 100).toFixed(2)}
+                    </td>
+                    <td className="px-5 py-4 text-xs text-muted hidden md:table-cell font-medium">
+                      {new Date(user.createdAt).toLocaleDateString('en-GB')}
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

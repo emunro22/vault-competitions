@@ -1,19 +1,33 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useAuth } from '@/lib/auth-context';
 
 export default function RegisterPage() {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { register } = useAuth();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-    await new Promise((r) => setTimeout(r, 1000));
-    setError('Registration requires database connection. Please configure your .env file.');
-    setLoading(false);
+
+    const result = await register({ email, password, firstName, lastName, phone: phone || undefined });
+    if (result.error) {
+      setError(result.error);
+      setLoading(false);
+    } else {
+      router.push('/account');
+    }
   };
 
   return (
@@ -39,27 +53,62 @@ export default function RegisterPage() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-semibold text-foreground mb-1.5">First Name</label>
-              <input type="text" required className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="John" />
+              <input
+                type="text"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+                className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors"
+                placeholder="John"
+              />
             </div>
             <div>
               <label className="block text-sm font-semibold text-foreground mb-1.5">Last Name</label>
-              <input type="text" required className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="Smith" />
+              <input
+                type="text"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+                className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors"
+                placeholder="Smith"
+              />
             </div>
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-foreground mb-1.5">Email Address</label>
-            <input type="email" required className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="you@example.com" />
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors"
+              placeholder="you@example.com"
+            />
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-foreground mb-1.5">Phone Number</label>
-            <input type="tel" className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="07xxx xxxxxx" />
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors"
+              placeholder="07xxx xxxxxx"
+            />
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-foreground mb-1.5">Password</label>
-            <input type="password" required minLength={8} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors" placeholder="Min 8 characters" />
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={8}
+              className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors"
+              placeholder="Min 8 characters"
+            />
           </div>
 
           <div className="flex items-start gap-3">
@@ -72,7 +121,11 @@ export default function RegisterPage() {
             </label>
           </div>
 
-          <button type="submit" disabled={loading} className="w-full py-3.5 bg-primary hover:bg-primary-light text-background font-bold rounded-xl transition-all hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100">
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3.5 bg-primary hover:bg-primary-light text-background font-bold rounded-xl transition-all hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+          >
             {loading ? 'Creating account...' : 'Create Account'}
           </button>
         </form>

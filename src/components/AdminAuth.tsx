@@ -1,35 +1,26 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
-const ADMIN_PASSWORD = 'ClutchComps2026!';
-const STORAGE_KEY = 'cc-admin-auth';
+interface SessionUser {
+  id: string;
+  email: string;
+  name: string;
+  role: 'user' | 'admin';
+}
 
 export default function AdminAuth({ children }: { children: React.ReactNode }) {
-  const [authenticated, setAuthenticated] = useState(false);
+  const [user, setUser] = useState<SessionUser | null>(null);
   const [checking, setChecking] = useState(true);
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
 
   useEffect(() => {
-    const stored = sessionStorage.getItem(STORAGE_KEY);
-    if (stored === 'true') {
-      setAuthenticated(true);
-    }
-    setChecking(false);
+    fetch('/api/auth/session')
+      .then((r) => r.json())
+      .then((data) => setUser(data.user ?? null))
+      .catch(() => setUser(null))
+      .finally(() => setChecking(false));
   }, []);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password === ADMIN_PASSWORD) {
-      sessionStorage.setItem(STORAGE_KEY, 'true');
-      setAuthenticated(true);
-      setError('');
-    } else {
-      setError('Incorrect password');
-      setPassword('');
-    }
-  };
 
   if (checking) {
     return (
@@ -39,47 +30,23 @@ export default function AdminAuth({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!authenticated) {
+  if (!user || user.role !== 'admin') {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center px-4">
-        <div className="w-full max-w-sm">
-          <div className="text-center mb-8">
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-primary-light flex items-center justify-center font-black text-background text-2xl mx-auto mb-4">
-              CC
-            </div>
-            <h1 className="text-2xl font-black text-foreground mb-2">Admin Access</h1>
-            <p className="text-muted text-sm font-medium">Enter the admin password to continue</p>
+        <div className="w-full max-w-sm text-center">
+          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-primary-light flex items-center justify-center font-black text-background text-2xl mx-auto mb-4">
+            CC
           </div>
-
-          <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-6 space-y-5">
-            {error && (
-              <div className="bg-danger/10 border border-danger/20 text-danger text-sm font-semibold rounded-xl p-3 text-center">
-                {error}
-              </div>
-            )}
-
-            <div>
-              <label className="block text-sm font-semibold text-foreground mb-1.5">
-                Password
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                autoFocus
-                className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground placeholder-muted focus:outline-none focus:border-primary transition-colors"
-                placeholder="Enter admin password"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full py-3.5 bg-primary hover:bg-primary-light text-background font-bold rounded-xl transition-all hover:scale-[1.02]"
-            >
-              Access Admin Portal
-            </button>
-          </form>
+          <h1 className="text-2xl font-black text-foreground mb-2">Admin Access Required</h1>
+          <p className="text-muted text-sm font-medium mb-6">
+            {user ? 'Your account does not have admin privileges.' : 'Please log in with an admin account to access this area.'}
+          </p>
+          <Link
+            href={user ? '/' : '/auth/login'}
+            className="inline-flex px-6 py-3 bg-primary hover:bg-primary-light text-background font-bold rounded-xl transition-all hover:scale-[1.02]"
+          >
+            {user ? 'Back to Home' : 'Log In'}
+          </Link>
         </div>
       </div>
     );
