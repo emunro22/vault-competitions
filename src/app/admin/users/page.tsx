@@ -17,6 +17,9 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState<User | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
 
   useEffect(() => {
     fetch('/api/admin/users')
@@ -25,6 +28,30 @@ export default function AdminUsersPage() {
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
+
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    setDeleteError('');
+
+    try {
+      const res = await fetch(`/api/admin/users/${deleteTarget.id}`, { method: 'DELETE' });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setDeleteError(data.error);
+        setDeleting(false);
+        return;
+      }
+
+      setUsers((prev) => prev.filter((u) => u.id !== deleteTarget.id));
+      setDeleteTarget(null);
+    } catch {
+      setDeleteError('Failed to delete user. Please try again.');
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   const filtered = users.filter(
     (u) =>
@@ -87,12 +114,13 @@ export default function AdminUsersPage() {
                 <th className="text-left text-xs font-bold text-muted uppercase tracking-wider px-5 py-3 hidden md:table-cell">Entries</th>
                 <th className="text-left text-xs font-bold text-muted uppercase tracking-wider px-5 py-3 hidden lg:table-cell">Total Spent</th>
                 <th className="text-left text-xs font-bold text-muted uppercase tracking-wider px-5 py-3 hidden md:table-cell">Joined</th>
+                <th className="text-right text-xs font-bold text-muted uppercase tracking-wider px-5 py-3">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-5 py-8 text-center text-sm text-muted">
+                  <td colSpan={6} className="px-5 py-8 text-center text-sm text-muted">
                     {search ? 'No users match your search' : 'No users yet'}
                   </td>
                 </tr>
@@ -124,6 +152,16 @@ export default function AdminUsersPage() {
                     <td className="px-5 py-4 text-xs text-muted hidden md:table-cell font-medium">
                       {new Date(user.createdAt).toLocaleDateString('en-GB')}
                     </td>
+                    <td className="px-5 py-4 text-right">
+                      {user.role !== 'admin' && (
+                        <button
+                          onClick={() => setDeleteTarget(user)}
+                          className="text-xs font-bold text-danger/70 hover:text-danger transition-colors px-3 py-1.5 rounded-lg hover:bg-danger/10"
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </td>
                   </tr>
                 ))
               )}
@@ -131,6 +169,50 @@ export default function AdminUsersPage() {
           </table>
         </div>
       </div>
+
+      {deleteTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => { setDeleteTarget(null); setDeleteError(''); }} />
+          <div className="relative bg-card border border-border rounded-2xl p-6 sm:p-8 w-full max-w-md animate-fade-in-up">
+            <div className="text-center mb-6">
+              <div className="w-14 h-14 rounded-full bg-danger/10 border border-danger/20 flex items-center justify-center mx-auto mb-4">
+                <svg className="w-7 h-7 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <h2 className="text-xl font-black text-foreground mb-2">Remove User</h2>
+              <p className="text-sm text-muted font-medium">
+                Are you sure you want to permanently remove <span className="text-foreground font-bold">{deleteTarget.name}</span> ({deleteTarget.email})?
+              </p>
+              <p className="text-xs text-danger/80 font-semibold mt-2">
+                This will delete all their orders, tickets, and data. This action cannot be undone.
+              </p>
+            </div>
+
+            {deleteError && (
+              <div className="bg-danger/10 border border-danger/20 text-danger text-sm font-semibold rounded-xl p-3 mb-4">
+                {deleteError}
+              </div>
+            )}
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => { setDeleteTarget(null); setDeleteError(''); }}
+                className="flex-1 py-3 bg-background border border-border text-foreground font-bold rounded-xl hover:bg-card transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={deleting}
+                className="flex-1 py-3 bg-danger hover:bg-danger/90 text-white font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {deleting ? 'Removing...' : 'Remove User'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
