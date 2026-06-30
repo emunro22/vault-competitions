@@ -68,7 +68,7 @@ export default function HeroSection() {
               width={400}
               height={400}
               aria-hidden="true"
-              className="pointer-events-none select-none absolute -z-10 -top-16 -right-16 w-80 h-80 lg:w-md lg:h-112 object-contain opacity-25"
+              className="pointer-events-none select-none absolute -z-10 -top-24 -right-24 w-md h-112 lg:w-xl lg:h-144 object-contain opacity-45"
             />
             <HeroSlideshow />
           </div>
