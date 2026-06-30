@@ -20,14 +20,14 @@ function CartButton() {
   return (
     <button
       onClick={() => setCartOpen(true)}
-      className="relative p-2 text-muted hover:text-foreground transition-colors"
+      className="relative p-2.5 text-muted hover:text-foreground transition-colors"
       aria-label="Open cart"
     >
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
       </svg>
       {cartCount > 0 && (
-        <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-primary text-background text-[10px] font-black rounded-full flex items-center justify-center">
+        <span className="absolute -top-0.5 -right-0.5 w-6 h-6 bg-primary text-background text-xs font-black rounded-full flex items-center justify-center">
           {cartCount > 99 ? '99+' : cartCount}
         </span>
       )}
@@ -46,13 +46,13 @@ function UserMenu() {
       <div className="hidden lg:flex items-center gap-3">
         <Link
           href="/auth/login"
-          className="px-4 py-2 text-sm font-semibold text-muted hover:text-foreground transition-colors"
+          className="px-5 py-2.5 text-base font-semibold text-muted hover:text-foreground transition-colors"
         >
           Log In
         </Link>
         <Link
           href="/auth/register"
-          className="px-5 py-2.5 text-sm font-bold bg-primary hover:bg-primary-light text-background rounded-xl transition-all hover:scale-105 glow-primary"
+          className="px-6 py-3 text-base font-bold bg-primary hover:bg-primary-light text-background rounded-xl transition-all hover:scale-105 glow-primary"
         >
           Sign Up
         </Link>
@@ -66,13 +66,13 @@ function UserMenu() {
         onClick={() => setOpen(!open)}
         className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-white/5 transition-colors"
       >
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary-light flex items-center justify-center text-background text-sm font-black">
+        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-light flex items-center justify-center text-background text-base font-black">
           {user.name[0]}
         </div>
-        <span className="text-sm font-semibold text-foreground max-w-[120px] truncate">
+        <span className="text-base font-semibold text-foreground max-w-[120px] truncate">
           {user.name.split(' ')[0]}
         </span>
-        <svg className="w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-5 h-5 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </button>
@@ -128,14 +128,14 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 bg-surface/90 backdrop-blur-xl border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 lg:h-20">
-          <Link href="/" className="flex items-center gap-2.5 shrink-0">
-            <Image src="/logo.png" alt="Clutch Competitions" width={56} height={56} className="w-14 h-14 object-contain shrink-0" />
+        <div className="flex items-center justify-between h-20 lg:h-24">
+          <Link href="/" className="flex items-center gap-3 shrink-0">
+            <Image src="/logo.png" alt="Clutch Competitions" width={64} height={64} className="w-16 h-16 object-contain shrink-0" />
             <div className="flex flex-col">
-              <span className="text-xl font-extrabold tracking-tight text-foreground">
+              <span className="text-2xl font-extrabold tracking-tight text-foreground">
                 Clutch<span className="text-primary">Comps</span>
               </span>
-              <span className="text-[10px] text-muted -mt-1 hidden sm:block tracking-widest uppercase font-medium">
+              <span className="text-xs text-muted -mt-1 hidden sm:block tracking-widest uppercase font-medium">
                 Premium Prize Competitions
               </span>
             </div>
@@ -146,7 +146,7 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="px-4 py-2 text-sm font-semibold text-muted hover:text-foreground transition-colors rounded-lg hover:bg-white/5"
+                className="px-5 py-2.5 text-base font-semibold text-muted hover:text-foreground transition-colors rounded-lg hover:bg-white/5"
               >
                 {link.label}
               </Link>
@@ -159,10 +159,10 @@ export default function Navbar() {
 
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="lg:hidden p-2 text-muted hover:text-foreground"
+              className="lg:hidden p-2.5 text-muted hover:text-foreground"
               aria-label="Toggle menu"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {mobileOpen ? (
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 ) : (
