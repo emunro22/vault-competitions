@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '@/lib/auth-context';
 
 export default function RegisterPage() {
@@ -38,9 +39,7 @@ export default function RegisterPage() {
       <div className="animate-fade-in-up w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-6">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary-light flex items-center justify-center font-black text-background text-xl">
-              CC
-            </div>
+            <Image src="/logo.png" alt="Clutch Competitions" width={48} height={48} className="w-12 h-12 object-contain" />
           </Link>
           <h1 className="text-2xl font-black text-foreground mb-2">Create Your Account</h1>
           <p className="text-muted font-medium">Join Clutch Competitions and start winning today</p>

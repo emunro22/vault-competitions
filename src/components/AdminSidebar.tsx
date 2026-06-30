@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 const adminLinks = [
@@ -49,9 +50,7 @@ export default function AdminSidebar() {
     <aside className="w-64 bg-surface border-r border-border min-h-screen p-4 hidden lg:block">
       <div className="mb-8 px-3">
         <Link href="/" className="flex items-center gap-2 mb-1">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-light flex items-center justify-center font-black text-background text-sm">
-            CC
-          </div>
+          <Image src="/logo.png" alt="Clutch Competitions" width={32} height={32} className="w-8 h-8 object-contain" />
           <span className="text-lg font-extrabold text-foreground">
             Clutch<span className="text-primary">Comps</span>
           </span>

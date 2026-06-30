@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 import { useStore } from '@/lib/store';
 import { useAuth } from '@/lib/auth-context';
@@ -129,9 +130,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           <Link href="/" className="flex items-center gap-2.5 shrink-0">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-light flex items-center justify-center font-black text-background text-lg tracking-tight">
-              CC
-            </div>
+            <Image src="/logo.png" alt="Clutch Competitions" width={40} height={40} className="w-10 h-10 object-contain" />
             <div className="flex flex-col">
               <span className="text-xl font-extrabold tracking-tight text-foreground">
                 Clutch<span className="text-primary">Comps</span>

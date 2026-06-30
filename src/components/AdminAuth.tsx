@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface SessionUser {
   id: string;
@@ -34,9 +35,7 @@ export default function AdminAuth({ children }: { children: React.ReactNode }) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center px-4">
         <div className="w-full max-w-sm text-center">
-          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-primary-light flex items-center justify-center font-black text-background text-2xl mx-auto mb-4">
-            CC
-          </div>
+          <Image src="/logo.png" alt="Clutch Competitions" width={56} height={56} className="w-14 h-14 object-contain mx-auto mb-4" />
           <h1 className="text-2xl font-black text-foreground mb-2">Admin Access Required</h1>
           <p className="text-muted text-sm font-medium mb-6">
             {user ? 'Your account does not have admin privileges.' : 'Please log in with an admin account to access this area.'}

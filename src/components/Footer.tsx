@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 const footerLinks = {
   Competitions: [
@@ -73,9 +74,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
             <Link href="/" className="flex items-center gap-2.5 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-light flex items-center justify-center font-black text-background text-lg">
-                CC
-              </div>
+              <Image src="/logo.png" alt="Clutch Competitions" width={40} height={40} className="w-10 h-10 object-contain" />
               <span className="text-xl font-extrabold text-foreground">
                 Clutch<span className="text-primary">Comps</span>
               </span>
