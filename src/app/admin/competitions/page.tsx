@@ -24,6 +24,7 @@ export default function AdminCompetitionsPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'live' | 'draft' | 'drawn'>('all');
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [error, setError] = useState('');
 
   const loadCompetitions = () => {
     fetch('/api/admin/competitions')
@@ -40,14 +41,19 @@ export default function AdminCompetitionsPage() {
   const handleDelete = async (id: string, title: string) => {
     if (!confirm(`Are you sure you want to delete "${title}"? This cannot be undone.`)) return;
 
+    setError('');
     setDeleting(id);
     try {
       const res = await fetch(`/api/admin/competitions/${id}`, { method: 'DELETE' });
+      const data = await res.json().catch(() => ({}));
       if (res.ok) {
         setCompetitions((prev) => prev.filter((c) => c.id !== id));
+      } else {
+        setError(data.error || 'Failed to delete competition');
       }
     } catch (err) {
       console.error('Delete failed:', err);
+      setError('Failed to delete competition');
     } finally {
       setDeleting(null);
     }
@@ -80,6 +86,12 @@ export default function AdminCompetitionsPage() {
           New Competition
         </Link>
       </div>
+
+      {error && (
+        <div className="bg-danger/10 border border-danger/20 text-danger text-sm font-semibold rounded-xl p-3 mb-6">
+          {error}
+        </div>
+      )}
 
       <div className="flex gap-1 bg-card border border-border rounded-xl p-1 mb-6 w-fit">
         {(['all', 'live', 'draft', 'drawn'] as const).map((f) => (

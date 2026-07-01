@@ -23,6 +23,22 @@ async function seed() {
   });
   console.log('✓ Admin user created: admin@clutchcompetitions.co.uk / ClutchAdmin2026!');
 
+  // Seed categories
+  const categorySeed = [
+    { name: 'Cars', slug: 'cars', icon: '🚗' },
+    { name: 'Cash', slug: 'cash', icon: '💰' },
+    { name: 'Tech', slug: 'tech', icon: '💻' },
+    { name: 'Holidays', slug: 'holidays', icon: '✈️' },
+    { name: 'Experiences', slug: 'experiences', icon: '🎯' },
+    { name: 'Home', slug: 'home', icon: '🏠' },
+    { name: 'Watches & Jewellery', slug: 'watches-jewellery', icon: '⌚' },
+  ];
+
+  for (const cat of categorySeed) {
+    await db.insert(schema.categories).values({ id: uuid(), ...cat });
+    console.log(`✓ Category: ${cat.name}`);
+  }
+
   // Seed competitions
   const competitions = [
     {

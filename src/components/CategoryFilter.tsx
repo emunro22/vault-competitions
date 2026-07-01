@@ -1,6 +1,13 @@
 'use client';
 
-import { categories } from '@/lib/mock-data';
+import { useEffect, useState } from 'react';
+
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  icon: string;
+}
 
 interface CategoryFilterProps {
   activeCategory: string;
@@ -8,9 +15,20 @@ interface CategoryFilterProps {
 }
 
 export default function CategoryFilter({ activeCategory, onCategoryChange }: CategoryFilterProps) {
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    fetch('/api/categories')
+      .then((r) => r.json())
+      .then((data) => setCategories(data.categories || []))
+      .catch(console.error);
+  }, []);
+
+  const allCategories: Category[] = [{ id: 'all', name: 'All', slug: 'all', icon: '🏆' }, ...categories];
+
   return (
     <div className="flex flex-wrap gap-2">
-      {categories.map((category) => (
+      {allCategories.map((category) => (
         <button
           key={category.id}
           onClick={() => onCategoryChange(category.slug)}

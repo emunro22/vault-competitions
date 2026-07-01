@@ -45,6 +45,14 @@ export const verificationCodes = pgTable('verification_codes', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
+export const categories = pgTable('categories', {
+  id: text('id').primaryKey(),
+  name: varchar('name', { length: 100 }).notNull(),
+  slug: varchar('slug', { length: 100 }).notNull().unique(),
+  icon: varchar('icon', { length: 10 }).default('🏆').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
 export const competitions = pgTable('competitions', {
   id: text('id').primaryKey(),
   title: varchar('title', { length: 500 }).notNull(),

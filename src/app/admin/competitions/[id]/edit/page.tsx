@@ -6,6 +6,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { formatPrice } from '@/lib/utils';
 
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  icon: string;
+}
+
 interface Competition {
   id: string;
   title: string;
@@ -38,6 +45,7 @@ export default function EditCompetitionPage({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -79,6 +87,13 @@ export default function EditCompetitionPage({
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [id]);
+
+  useEffect(() => {
+    fetch('/api/admin/categories')
+      .then((r) => r.json())
+      .then((data) => setCategories(data.categories || []))
+      .catch(console.error);
+  }, []);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -141,13 +156,17 @@ export default function EditCompetitionPage({
   const handleDelete = async () => {
     if (!confirm(`Are you sure you want to delete "${title}"? This cannot be undone.`)) return;
 
+    setError('');
     try {
       const res = await fetch(`/api/admin/competitions/${id}`, { method: 'DELETE' });
+      const data = await res.json().catch(() => ({}));
       if (res.ok) {
         router.push('/admin/competitions');
+      } else {
+        setError(data.error || 'Failed to delete competition');
       }
     } catch {
-      setError('Failed to delete');
+      setError('Failed to delete competition');
     }
   };
 
@@ -210,17 +229,21 @@ export default function EditCompetitionPage({
               <textarea required value={description} onChange={(e) => setDescription(e.target.value)} rows={5} className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors resize-none" />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-foreground mb-1.5">Category</label>
-                <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground focus:outline-none focus:border-primary transition-colors cursor-pointer">
-                  <option value="cars">Cars</option>
-                  <option value="cash">Cash</option>
-                  <option value="tech">Tech</option>
-                  <option value="holidays">Holidays</option>
-                  <option value="experiences">Experiences</option>
-                  <option value="home">Home</option>
-                  <option value="watches-jewellery">Watches & Jewellery</option>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-sm font-semibold text-foreground">Category</label>
+                  <Link href="/admin/categories" className="text-xs text-primary hover:text-primary-light font-bold transition-colors">
+                    Manage categories
+                  </Link>
+                </div>
+                <select required value={category} onChange={(e) => setCategory(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground focus:outline-none focus:border-primary transition-colors cursor-pointer">
+                  {!categories.some((cat) => cat.slug === category) && category && (
+                    <option value={category}>{category}</option>
+                  )}
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.slug}>{cat.icon} {cat.name}</option>
+                  ))}
                 </select>
               </div>
               <div>
@@ -234,12 +257,23 @@ export default function EditCompetitionPage({
                 </select>
               </div>
             </div>
+
+            {status === 'draft' && (
+              <div className="bg-primary/10 border border-primary/20 rounded-xl p-3 flex items-start gap-2.5">
+                <svg className="w-4 h-4 text-primary shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="text-xs text-primary font-semibold">
+                  This competition is set to <span className="font-bold">Draft</span> and won&apos;t appear on the public site. Set Status to <span className="font-bold">Live</span> to publish it.
+                </p>
+              </div>
+            )}
           </div>
 
           <div className="bg-card border border-border rounded-2xl p-6 space-y-5">
             <h2 className="text-lg font-bold text-foreground">Prize & Image</h2>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-foreground mb-1.5">Prize Value (£)</label>
                 <input type="number" required step="0.01" value={prizeValue} onChange={(e) => setPrizeValue(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground focus:outline-none focus:border-primary transition-colors" />
@@ -294,7 +328,7 @@ export default function EditCompetitionPage({
           <div className="bg-card border border-border rounded-2xl p-6 space-y-5">
             <h2 className="text-lg font-bold text-foreground">Ticket Settings</h2>
 
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-foreground mb-1.5">Ticket Price (£)</label>
                 <input type="number" required step="0.01" value={ticketPrice} onChange={(e) => setTicketPrice(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground focus:outline-none focus:border-primary transition-colors" />
@@ -346,7 +380,7 @@ export default function EditCompetitionPage({
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-4">
             <button
               type="button"
               onClick={handleDelete}
@@ -361,7 +395,7 @@ export default function EditCompetitionPage({
               <button
                 type="submit"
                 disabled={saving}
-                className="px-6 py-2.5 bg-primary hover:bg-primary-light text-background font-bold text-sm rounded-xl transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
+                className="flex-1 sm:flex-none px-6 py-2.5 bg-primary hover:bg-primary-light text-background font-bold text-sm rounded-xl transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
               >
                 {saving ? 'Saving...' : 'Save Changes'}
               </button>

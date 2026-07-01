@@ -28,24 +28,6 @@ export interface Winner {
   wonDate: string;
 }
 
-export interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  icon: string;
-}
-
-export const categories: Category[] = [
-  { id: '1', name: 'All', slug: 'all', icon: '🏆' },
-  { id: '2', name: 'Cars', slug: 'cars', icon: '🚗' },
-  { id: '3', name: 'Cash', slug: 'cash', icon: '💰' },
-  { id: '4', name: 'Tech', slug: 'tech', icon: '💻' },
-  { id: '5', name: 'Holidays', slug: 'holidays', icon: '✈️' },
-  { id: '6', name: 'Experiences', slug: 'experiences', icon: '🎯' },
-  { id: '7', name: 'Home', slug: 'home', icon: '🏠' },
-  { id: '8', name: 'Watches & Jewellery', slug: 'watches-jewellery', icon: '⌚' },
-];
-
 export const competitions: Competition[] = [
   {
     id: '1',

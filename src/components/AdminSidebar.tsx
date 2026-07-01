@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -41,54 +42,143 @@ const adminLinks = [
       </svg>
     ),
   },
+  {
+    href: '/admin/categories',
+    label: 'Categories',
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 7h.01M7 3h5.586a1 1 0 01.707.293l6.414 6.414a1 1 0 010 1.414l-8.586 8.586a1 1 0 01-1.414 0l-6.414-6.414A1 1 0 013 12.586V7a4 4 0 014-4z" />
+      </svg>
+    ),
+  },
 ];
 
-export default function AdminSidebar() {
+function SidebarLinks({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 bg-surface border-r border-border min-h-screen p-4 hidden lg:block">
-      <div className="mb-8 px-3">
-        <Link href="/" className="flex items-center gap-2 mb-1">
-          <Image src="/logo.png" alt="Clutch Competitions" width={44} height={44} className="w-11 h-11 object-contain shrink-0" />
-          <span className="text-lg font-extrabold text-foreground">
-            Clutch<span className="text-primary">Comps</span>
-          </span>
+    <nav className="space-y-1">
+      {adminLinks.map((link) => {
+        const isActive = pathname === link.href || (link.href !== '/admin' && pathname.startsWith(link.href));
+        return (
+          <Link
+            key={link.href}
+            href={link.href}
+            onClick={onNavigate}
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+              isActive
+                ? 'bg-primary/10 text-primary border border-primary/20'
+                : 'text-muted hover:text-foreground hover:bg-white/5'
+            }`}
+          >
+            {link.icon}
+            {link.label}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
+
+export default function AdminSidebar() {
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [open]);
+
+  return (
+    <>
+      {/* Mobile top bar */}
+      <header className="lg:hidden sticky top-0 z-40 bg-surface border-b border-border px-4 py-3 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2">
+          <Image src="/logo.png" alt="Clutch Competitions" width={36} height={36} className="w-9 h-9 object-contain shrink-0" />
+          <span className="text-lg font-extrabold text-foreground">Admin</span>
         </Link>
-        <p className="text-xs text-muted ml-10 font-semibold">Admin Portal</p>
-      </div>
-
-      <nav className="space-y-1">
-        {adminLinks.map((link) => {
-          const isActive = pathname === link.href || (link.href !== '/admin' && pathname.startsWith(link.href));
-          return (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
-                isActive
-                  ? 'bg-primary/10 text-primary border border-primary/20'
-                  : 'text-muted hover:text-foreground hover:bg-white/5'
-              }`}
-            >
-              {link.icon}
-              {link.label}
-            </Link>
-          );
-        })}
-      </nav>
-
-      <div className="absolute bottom-4 left-4 right-4">
-        <Link
-          href="/"
-          className="flex items-center gap-2 px-3 py-2.5 text-sm text-muted hover:text-foreground transition-colors font-medium"
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label="Open menu"
+          className="w-10 h-10 flex items-center justify-center rounded-xl border border-border text-foreground hover:bg-white/5 transition-colors"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
-          Back to Site
-        </Link>
-      </div>
-    </aside>
+        </button>
+      </header>
+
+      {/* Mobile drawer */}
+      {open && (
+        <div className="lg:hidden fixed inset-0 z-50">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setOpen(false)} />
+          <aside className="absolute inset-y-0 left-0 w-72 max-w-[85vw] bg-surface border-r border-border p-4 flex flex-col animate-fade-in-up">
+            <div className="flex items-center justify-between mb-8 px-1">
+              <Link href="/" className="flex items-center gap-2" onClick={() => setOpen(false)}>
+                <Image src="/logo.png" alt="Clutch Competitions" width={40} height={40} className="w-10 h-10 object-contain shrink-0" />
+                <span className="text-lg font-extrabold text-foreground">
+                  Clutch<span className="text-primary">Comps</span>
+                </span>
+              </Link>
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                aria-label="Close menu"
+                className="w-9 h-9 flex items-center justify-center rounded-lg text-muted hover:text-foreground hover:bg-white/5 transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <SidebarLinks onNavigate={() => setOpen(false)} />
+
+            <div className="mt-auto">
+              <Link
+                href="/"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2 px-3 py-2.5 text-sm text-muted hover:text-foreground transition-colors font-medium"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Back to Site
+              </Link>
+            </div>
+          </aside>
+        </div>
+      )}
+
+      {/* Desktop sidebar */}
+      <aside className="w-64 bg-surface border-r border-border min-h-screen p-4 hidden lg:flex lg:flex-col">
+        <div className="mb-8 px-3">
+          <Link href="/" className="flex items-center gap-2 mb-1">
+            <Image src="/logo.png" alt="Clutch Competitions" width={44} height={44} className="w-11 h-11 object-contain shrink-0" />
+            <span className="text-lg font-extrabold text-foreground">
+              Clutch<span className="text-primary">Comps</span>
+            </span>
+          </Link>
+          <p className="text-xs text-muted ml-10 font-semibold">Admin Portal</p>
+        </div>
+
+        <SidebarLinks />
+
+        <div className="mt-auto">
+          <Link
+            href="/"
+            className="flex items-center gap-2 px-3 py-2.5 text-sm text-muted hover:text-foreground transition-colors font-medium"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back to Site
+          </Link>
+        </div>
+      </aside>
+    </>
   );
 }

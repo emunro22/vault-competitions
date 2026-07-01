@@ -1,9 +1,16 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  icon: string;
+}
 
 export default function NewCompetitionPage() {
   const router = useRouter();
@@ -12,10 +19,11 @@ export default function NewCompetitionPage() {
   const [error, setError] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('cars');
+  const [category, setCategory] = useState('');
   const [status, setStatus] = useState('draft');
   const [prizeValue, setPrizeValue] = useState('');
   const [cashAlternative, setCashAlternative] = useState('');
@@ -25,6 +33,17 @@ export default function NewCompetitionPage() {
   const [drawDate, setDrawDate] = useState('');
   const [threshold, setThreshold] = useState(85);
   const [featured, setFeatured] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/admin/categories')
+      .then((r) => r.json())
+      .then((data) => {
+        const cats: Category[] = data.categories || [];
+        setCategories(cats);
+        setCategory((prev) => prev || cats[0]?.slug || '');
+      })
+      .catch(console.error);
+  }, []);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -122,15 +141,17 @@ export default function NewCompetitionPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-foreground mb-1.5">Category</label>
-                <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground focus:outline-none focus:border-primary transition-colors cursor-pointer">
-                  <option value="cars">Cars</option>
-                  <option value="cash">Cash</option>
-                  <option value="tech">Tech</option>
-                  <option value="holidays">Holidays</option>
-                  <option value="experiences">Experiences</option>
-                  <option value="home">Home</option>
-                  <option value="watches-jewellery">Watches & Jewellery</option>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-sm font-semibold text-foreground">Category</label>
+                  <Link href="/admin/categories" className="text-xs text-primary hover:text-primary-light font-bold transition-colors">
+                    Manage categories
+                  </Link>
+                </div>
+                <select required value={category} onChange={(e) => setCategory(e.target.value)} className="w-full h-12 bg-background border border-border rounded-xl px-4 text-foreground focus:outline-none focus:border-primary transition-colors cursor-pointer">
+                  {categories.length === 0 && <option value="">No categories yet</option>}
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.slug}>{cat.icon} {cat.name}</option>
+                  ))}
                 </select>
               </div>
               <div>
@@ -142,6 +163,17 @@ export default function NewCompetitionPage() {
                 </select>
               </div>
             </div>
+
+            {status === 'draft' && (
+              <div className="bg-primary/10 border border-primary/20 rounded-xl p-3 flex items-start gap-2.5">
+                <svg className="w-4 h-4 text-primary shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="text-xs text-primary font-semibold">
+                  This competition is set to <span className="font-bold">Draft</span> and won&apos;t appear on the public site. Set Status to <span className="font-bold">Live</span> to publish it.
+                </p>
+              </div>
+            )}
           </div>
 
           <div className="bg-card border border-border rounded-2xl p-6 space-y-5">
