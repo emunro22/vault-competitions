@@ -154,7 +154,7 @@ export default function EditCompetitionPage({
   };
 
   const handleDelete = async () => {
-    if (!confirm(`Are you sure you want to delete "${title}"? This cannot be undone.`)) return;
+    if (!confirm(`Are you sure you want to delete "${title}"? This will also permanently delete any orders, tickets, and winner records tied to it. This cannot be undone.`)) return;
 
     setError('');
     try {

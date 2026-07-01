@@ -77,16 +77,16 @@ export const competitions = pgTable('competitions', {
 export const tickets = pgTable('tickets', {
   id: text('id').primaryKey(),
   userId: text('user_id').references(() => users.id).notNull(),
-  competitionId: text('competition_id').references(() => competitions.id).notNull(),
+  competitionId: text('competition_id').references(() => competitions.id, { onDelete: 'cascade' }).notNull(),
   ticketNumber: integer('ticket_number').notNull(),
-  orderId: text('order_id').references(() => orders.id).notNull(),
+  orderId: text('order_id').references(() => orders.id, { onDelete: 'cascade' }).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 export const orders = pgTable('orders', {
   id: text('id').primaryKey(),
   userId: text('user_id').references(() => users.id).notNull(),
-  competitionId: text('competition_id').references(() => competitions.id).notNull(),
+  competitionId: text('competition_id').references(() => competitions.id, { onDelete: 'cascade' }).notNull(),
   quantity: integer('quantity').notNull(),
   totalPence: integer('total_pence').notNull(),
   status: orderStatusEnum('status').default('pending').notNull(),
@@ -96,9 +96,9 @@ export const orders = pgTable('orders', {
 
 export const winners = pgTable('winners', {
   id: text('id').primaryKey(),
-  competitionId: text('competition_id').references(() => competitions.id).notNull(),
+  competitionId: text('competition_id').references(() => competitions.id, { onDelete: 'cascade' }).notNull(),
   userId: text('user_id').references(() => users.id).notNull(),
-  ticketId: text('ticket_id').references(() => tickets.id).notNull(),
+  ticketId: text('ticket_id').references(() => tickets.id, { onDelete: 'cascade' }).notNull(),
   prizeChosen: varchar('prize_chosen', { length: 50 }),
   announcedAt: timestamp('announced_at').defaultNow().notNull(),
 });

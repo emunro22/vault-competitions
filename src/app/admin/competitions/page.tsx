@@ -39,7 +39,7 @@ export default function AdminCompetitionsPage() {
   }, []);
 
   const handleDelete = async (id: string, title: string) => {
-    if (!confirm(`Are you sure you want to delete "${title}"? This cannot be undone.`)) return;
+    if (!confirm(`Are you sure you want to delete "${title}"? This will also permanently delete any orders, tickets, and winner records tied to it. This cannot be undone.`)) return;
 
     setError('');
     setDeleting(id);

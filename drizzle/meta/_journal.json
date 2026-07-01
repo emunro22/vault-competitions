@@ -15,6 +15,13 @@
       "when": 1782944695530,
       "tag": "0001_add_categories",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1782945465881,
+      "tag": "0002_cascade_delete_competition_relations",
+      "breakpoints": true
     }
   ]
 }

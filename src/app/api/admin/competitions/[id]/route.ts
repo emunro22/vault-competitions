@@ -1,6 +1,6 @@
 import { getSession } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { competitions, orders } from '@/lib/db/schema';
+import { competitions } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { slugify } from '@/lib/utils';
 
@@ -60,19 +60,6 @@ export async function DELETE(
   const { id } = await params;
 
   try {
-    const [existingOrder] = await db
-      .select({ id: orders.id })
-      .from(orders)
-      .where(eq(orders.competitionId, id))
-      .limit(1);
-
-    if (existingOrder) {
-      return Response.json(
-        { error: 'This competition has existing orders and cannot be deleted. Mark it as "Drawn" instead to archive it.' },
-        { status: 409 }
-      );
-    }
-
     await db.delete(competitions).where(eq(competitions.id, id));
     return Response.json({ success: true });
   } catch (error) {
